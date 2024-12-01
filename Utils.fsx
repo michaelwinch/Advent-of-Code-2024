@@ -3,14 +3,38 @@ let tee f x = f x; x
 let log x = printfn "LOG: %A" x
 let logm m x = printfn "%s: %A" m x
 
-module Solution =
-    open System.Diagnostics
+type Run =
+    | Actual of day: int
+    | Example of day: int * example: int option
 
-    let run name f input =
-        let sw = Stopwatch.StartNew ()
-        let result = f input
+    static member toFilePath =
+        function
+        | Actual day -> $"Inputs/Actual/Day{day}.txt"
+        | Example (day, None) -> $"Inputs/Examples/Day{day}.txt"
+        | Example (day, Some example) -> $"Inputs/Examples/Day{day}_{example}.txt"
+
+    static member warmUp f filePath =
+        for _ in [1..3] do
+            f filePath |> ignore
+
+    static member run name f run =
+        let filePath = Run.toFilePath run
+
+        Run.warmUp f filePath
+
+        let sw = System.Diagnostics.Stopwatch.StartNew ()
+        let result = f filePath
         let elapsedMs = sw.ElapsedMilliseconds
+        
         printfn "%s completed in %dms with result: %A" name elapsedMs result
+
+    static member example (f, day: int, part: int, ?example: int) =
+        Example (day, example)
+        |> Run.run $"Part {part} example" f
+
+    static member actual (f, day: int, part: int) =
+        Actual day
+        |> Run.run $"Part {part} actual" f
 
 
 module File =
@@ -114,6 +138,11 @@ module List =
                 loop (newPairs @ acc) t
 
         loop [] xs
+
+
+module Map =
+    let mapValue f =
+        Map.map (fun _ -> f)
 
 
 type List2D<'a> = 'a list list
