@@ -17,10 +17,11 @@ type Run =
         for _ in [1..3] do
             f filePath |> ignore
 
-    static member run name f run =
+    static member run name f debug run =
         let filePath = Run.toFilePath run
 
-        Run.warmUp f filePath
+        if not debug then
+            Run.warmUp f filePath
 
         let sw = System.Diagnostics.Stopwatch.StartNew ()
         let result = f filePath
@@ -28,13 +29,13 @@ type Run =
         
         printfn "%s completed in %dms with result: %A" name elapsedMs result
 
-    static member example (f, day: int, part: int, ?example: int) =
+    static member example (f, day: int, part: int, ?example: int, ?debug: bool) =
         Example (day, example)
-        |> Run.run $"Part {part} example" f
+        |> Run.run $"Part {part} example" f (defaultArg debug false)
 
-    static member actual (f, day: int, part: int) =
+    static member actual (f, day: int, part: int, ?debug: bool) =
         Actual day
-        |> Run.run $"Part {part} actual" f
+        |> Run.run $"Part {part} actual" f (defaultArg debug false)
 
 
 module File =
@@ -129,6 +130,12 @@ module Array2D =
 
 
 module List =
+    /// Except using the index
+    let excepti exceptIdx xs =
+        xs
+        |> List.mapi (fun idx x -> if idx = exceptIdx then None else Some x)
+        |> List.choose id
+
     let getUniquePairs (xs: _ list) =
         let rec loop acc =
             function
