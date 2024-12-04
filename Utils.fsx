@@ -146,6 +146,16 @@ module List =
 
         loop [] xs
 
+    let chooseAll f (xs: _ option list) =
+        let chosen =
+            List.choose f xs
+
+        if List.length chosen = List.length xs then chosen
+        else []
+
+    let countIf (f: 'a -> bool) (xs: 'a list) =
+        xs |> List.filter f |> List.length
+
 
 module Map =
     let mapValue f =
@@ -164,7 +174,12 @@ module List2D =
     let get y x (list: _ List2D) =
         list[y][x]
 
-    let set y x value (list: _ List2D)=
+    let tryGet y x (list: _ List2D) =
+        list
+        |> List.tryItem y
+        |> Option.bind (List.tryItem x)
+
+    let set y x value (list: _ List2D) =
         list
         |> List.mapi (fun idxY row ->
             if idxY = y then
@@ -193,3 +208,28 @@ module List2D =
     let log (formatter: _ -> string) (list: _ List2D) =
         List.map (List.map formatter >> String.concat "") list
         |> List.iter log
+
+    let ofArray2D (Array2D array) : _ List2D =
+        array
+        |> List.ofArray
+        |> List.map List.ofArray
+
+    let pivot (list: _ List2D) =
+        let yLength = lengthY list
+        let xLength = lengthX list
+
+        let idxMap =
+            [
+                for y in [ 0 .. yLength - 1 ] do
+                    for x in  [ 0 .. xLength - 1 ] do
+                        yield (x, y), get y x list
+            ]
+            |> Map
+
+        Array2D.init xLength yLength (fun y x -> Map.find (y, x) idxMap)
+        |> ofArray2D
+
+module ListOption =
+    let ofList xs =
+        if List.isEmpty xs then None
+        else Some xs
