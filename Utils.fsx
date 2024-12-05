@@ -31,7 +31,7 @@ type Run =
 
     static member example (f, day: int, part: int, ?example: int, ?debug: bool) =
         Example (day, example)
-        |> Run.run $"Part {part} example" f (defaultArg debug false)
+        |> Run.run $"Part {part} example" f (defaultArg debug true)
 
     static member actual (f, day: int, part: int, ?debug: bool) =
         Actual day
@@ -156,6 +156,12 @@ module List =
     let countIf (f: 'a -> bool) (xs: 'a list) =
         xs |> List.filter f |> List.length
 
+    let insertAfter index value list =
+        if index = List.length list - 1 then
+            list @ [ value ]
+        else
+            List.insertAt (index + 1) value list
+
 
 module Map =
     let mapValue f =
@@ -233,3 +239,37 @@ module ListOption =
     let ofList xs =
         if List.isEmpty xs then None
         else Some xs
+
+
+// module Test =
+//     let connect (separator: string) (prefix: string) (suffix: string) = $"{prefix}{separator}{suffix}"
+//     let connectKebab = connect "-"
+//     let connectKebab2 prefix suffix = connect "-" prefix suffix
+//
+//     let run () = ()
+//
+//     type Amount = { Value: int }
+//     module Amount =
+//         let sum = List.sumBy _.Value
+//
+//     type Account = { Id: string }
+//     type Transaction = { AccountId: string; Amount: Amount }
+//
+//     let getIncomeByAccount =
+//         List.groupBy _.AccountId
+//         >> Map
+//         >> Map.map (fun _ -> List.map _.Amount >> Amount.sum)
+
+    // let getIncomeByAccount transactions =
+    //     transactions
+    //     |> List.groupBy _.AccountId
+    //     |> Map
+    //     |> List.ofSeq
+    //     |> List.map (fun _ transactions -> transactions |> List.map _.Amount |> Amount.sum)
+    //     |> List.map (fun _ -> List.map _.Amount >> Amount.sum)
+
+
+    // let getIncome =
+    //     List.map _.Amount
+    //     >> List.filter ((<) 0)
+    //     >> List.reduce (+)
