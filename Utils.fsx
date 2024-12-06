@@ -156,6 +156,9 @@ module List =
     let countIf (f: 'a -> bool) (xs: 'a list) =
         xs |> List.filter f |> List.length
 
+    let countDistinct xs =
+        xs |> List.distinct |> List.length
+
     let insertAfter index value list =
         if index = List.length list - 1 then
             list @ [ value ]
@@ -234,6 +237,10 @@ module List2D =
 
         Array2D.init xLength yLength (fun y x -> Map.find (y, x) idxMap)
         |> ofArray2D
+
+    let ofStringSeq : string seq -> char List2D =
+        List.ofSeq
+        >> List.map (_.ToCharArray() >> List.ofArray)
 
 module ListOption =
     let ofList xs =
