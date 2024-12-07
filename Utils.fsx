@@ -13,21 +13,14 @@ type Run =
         | Example (day, None) -> $"Inputs/Examples/Day{day}.txt"
         | Example (day, Some example) -> $"Inputs/Examples/Day{day}_{example}.txt"
 
-    static member warmUp f filePath =
-        for _ in [1..3] do
-            f filePath |> ignore
-
     static member run name f debug run =
         let filePath = Run.toFilePath run
-
-        if not debug then
-            Run.warmUp f filePath
-
-        let sw = System.Diagnostics.Stopwatch.StartNew ()
-        let result = f filePath
-        let elapsedMs = sw.ElapsedMilliseconds
-        
-        printfn "%s completed in %dms with result: %A" name elapsedMs result
+        let runs = if debug then [1] else [1..3]
+        for _ in runs do
+            let sw = System.Diagnostics.Stopwatch.StartNew ()
+            let result = f filePath
+            let elapsedMs = sw.ElapsedMilliseconds
+            printfn "%s completed in %dms with result: %A" name elapsedMs result
 
     static member example (f, day: int, part: int, ?example: int, ?debug: bool) =
         Example (day, example)

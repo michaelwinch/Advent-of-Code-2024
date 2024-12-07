@@ -1,8 +1,10 @@
-#time
 #load "./Utils.fsx"
+#load "./Grid.fsx"
 
+open System.Collections.Generic
 open System.IO
 open Utils
+open Grid
 
 let getInput (inputFile: string) =
     seq {
@@ -10,6 +12,9 @@ let getInput (inputFile: string) =
         while not streamReader.EndOfStream do
             yield streamReader.ReadLine()
     }
+
+type Map = char Grid
+type Coordinates = GridIndex
 
 type Direction =
     | Up
@@ -29,12 +34,13 @@ type Direction =
             | '<' -> Left
             | x -> failwithf "unknown direction %c" x
 
-        let advanceCoordinates (y, x) =
-            function
-            | Up -> y - 1, x
-            | Right -> y, x + 1
-            | Down -> y + 1, x
-            | Left -> y, x - 1
+        let advanceCoordinates (coords: Coordinates) direction : Coordinates =
+            match direction with
+            | Up -> GridIndex.moveUp
+            | Right -> GridIndex.moveRight
+            | Down -> GridIndex.moveDown
+            | Left -> GridIndex.moveLeft
+            |> fun moveF -> moveF coords
 
         let turnRight =
             function
@@ -45,104 +51,110 @@ type Direction =
 
 let obstacle = '#'
 
+let getStartingCoords (map: Map) : Coordinates =
+    Grid.findIndex (fun x -> List.contains x ['^']) map
+
+let getStartingDirection (coords: Coordinates) (map: Map) =
+    Grid.item coords map
+    |> Direction.ofChar
 
 module Part1 =
-    let calculatePath (map: char List2D) =
-        let startingCoords = List2D.findIndex (fun x -> List.contains x ['^']) map
-        let startingDirection =
-            List2D.get (fst startingCoords) (snd startingCoords) map
-            |> Direction.ofChar
-
+    let calculatePath startingCoords startingDirection (map: Map) =
         List.unfold
             (fun (coords, direction) ->
-                let y, x as newCoords = Direction.advanceCoordinates coords direction
-                match List2D.tryGet y x map with
+                let newCoords = Direction.advanceCoordinates coords direction
+                match Grid.tryItem newCoords map with
                 | None -> None
-                | Some v ->
-                    if not (v = obstacle) then
-                        Some (newCoords, (newCoords, direction))
-                    else
-                        let direction = Direction.turnRight direction
-                        let x, y as newCoords = Direction.advanceCoordinates coords direction
-                        match List2D.tryGet y x map with
-                        | None -> None
-                        | Some _ -> // Doesn't handle a second obstacle
-                            Some (newCoords, (newCoords, direction))
-            )
-            (startingCoords, startingDirection)
-        |> fun xs -> startingCoords :: xs
-
-    let run inputFile =
-        getInput inputFile
-        |> List2D.ofStringSeq
-        |> calculatePath
-        |> List.distinct
-        |> List.length
-
-
-module Part2 =
-    let getStartingCoords map = List2D.findIndex (fun x -> List.contains x ['^']) map
-
-    let getStartingDirection (y, x) map =
-        List2D.get y x map
-        |> Direction.ofChar
-
-    let hasLoop (map: char List2D) (obstacley, obstaclex) =
-        let map = List2D.set obstacley obstaclex obstacle map
-        let startingCoords = getStartingCoords map
-        let startingDirection = getStartingDirection startingCoords map
-
-        let visitedInDirection coords direction visited =
-            visited
-            |> Map.tryFind coords
-            |> Option.map (List.contains direction)
-            |> Option.defaultValue false
-
-        let addVisited coords direction visited =
-            visited
-            |> Map.tryFind coords
-            |> function
-                | Some dirs -> Map.add coords (direction :: dirs) visited
-                | None -> Map.add coords [direction] visited
-
-        let rec loop visited coords direction =
-            let y, x as newCoords = Direction.advanceCoordinates coords direction
-            match List2D.tryGet y x map with
-            | None -> false
-            | Some v when not (v = obstacle) ->
-                if visitedInDirection newCoords direction visited then true
-                else loop (addVisited newCoords direction visited) newCoords direction
-            | Some _ ->
-                let direction = Direction.turnRight direction
-                let y, x as newCoords = Direction.advanceCoordinates coords direction
-                match List2D.tryGet y x map with
-                | None -> false
                 | Some v when not (v = obstacle) ->
-                    if visitedInDirection newCoords direction visited then true
-                    else loop (addVisited newCoords direction visited) newCoords direction
+                    Some (newCoords, (newCoords, direction))
                 | Some _ ->
                     let direction = Direction.turnRight direction
                     let newCoords = Direction.advanceCoordinates coords direction
-                    if visitedInDirection newCoords direction visited then true
-                    else loop (addVisited newCoords direction visited) newCoords direction
-
-        loop Map.empty startingCoords startingDirection
+                    match Grid.tryItem newCoords map with
+                    | None -> None
+                    | Some v when not (v = obstacle) ->
+                        Some (newCoords, (newCoords, direction))
+                    | Some _ -> failwith "2nd obstacle not handled"
+            )
+            (startingCoords, startingDirection)
+        |> fun visited -> startingCoords :: visited
 
     let run inputFile =
         let map =
             getInput inputFile
             |> List2D.ofStringSeq
 
+        let startingCoords = getStartingCoords map
+        let startingDirection = getStartingDirection startingCoords map
+
         map
-        |> List2D.mapi (fun y x v ->
-            if v = obstacle || List.contains v Direction.charList then None
-            else Some (y, x))
-        |> List.collect id
-        |> List.choose id
-        |> List.countIf (hasLoop map)
+        |> calculatePath startingCoords startingDirection
+        |> List.distinct
+        |> List.length
+
+
+module Part2 =
+    let getObstacleCoordinatesToTest startingCoords startingDirection map : Coordinates list =
+        Part1.calculatePath startingCoords startingDirection map
+        |> List.distinct
+        |> List.except [startingCoords]
+
+    type VisitedObstacles = HashSet<Coordinates * Direction>
+
+    module VisitedObstacles =
+        let empty() = HashSet<Coordinates * Direction>()
+
+        let contains coords direction (visited: VisitedObstacles) =
+            visited.Contains (coords, direction)
+
+        let add coords direction (visited: VisitedObstacles) =
+            let wasAdded = visited.Add (coords, direction)
+            visited, wasAdded
+            
+
+    let hasLoop startingCoords startingDirection (map: Map) (obstacleCoords: Coordinates) =
+        let map = Grid.updateAt obstacleCoords obstacle map
+
+        let rec loop visitedObstacles coords direction =
+            let newCoords = Direction.advanceCoordinates coords direction
+            match Grid.tryItem newCoords map with
+            | None -> false
+            | Some v when not (v = obstacle) ->
+                loop visitedObstacles newCoords direction
+            | Some _ ->
+                let visitedObstacles, wasAdded = VisitedObstacles.add coords direction visitedObstacles
+                if not wasAdded then true
+                else
+                    let direction = Direction.turnRight direction
+                    let newCoords = Direction.advanceCoordinates coords direction
+                    match Grid.tryItem newCoords map with
+                    | None -> false
+                    | Some v when not (v = obstacle) ->
+                        loop visitedObstacles newCoords direction
+                    | Some _ ->
+                        let visitedObstacles, wasAdded = VisitedObstacles.add coords direction visitedObstacles
+                        if not wasAdded then true
+                        else
+                            let direction = Direction.turnRight direction
+                            let newCoords = Direction.advanceCoordinates coords direction
+                            loop visitedObstacles newCoords direction
+
+        loop (VisitedObstacles.empty()) startingCoords startingDirection
+
+    let run inputFile =
+        let map =
+            getInput inputFile
+            |> List2D.ofStringSeq
+            
+        let startingCoords = getStartingCoords map
+        let startingDirection = getStartingDirection startingCoords map
+
+        map
+        |> getObstacleCoordinatesToTest startingCoords startingDirection
+        |> List.countIf (hasLoop startingCoords startingDirection map)
         
 Run.example (Part1.run, day = 6, part = 1) // Part 1 example completed in 1ms with result: 41
-Run.actual (Part1.run, day = 6, part = 1) // Part 1 example completed in 3ms with result: 4647
+Run.actual (Part1.run, day = 6, part = 1) // Part 1 example completed in 5ms with result: 4647
 
-Run.example (Part2.run, day = 6, part = 2) // Part 2 example completed in 9ms with result: 6
-Run.actual (Part2.run, day = 6, part = 2) // Part 2 actual completed in 138051ms with result: 1723
+Run.example (Part2.run, day = 6, part = 2) // Part 2 example completed in 1ms with result: 6
+Run.actual (Part2.run, day = 6, part = 2) // Part 2 actual completed in 3126ms with result: 1723
