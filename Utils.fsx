@@ -158,6 +158,18 @@ module List =
         else
             List.insertAt (index + 1) value list
 
+    // From https://stackoverflow.com/questions/1526046/f-permutations
+    let rec distribute e =
+        function
+        | [] -> [[e]]
+        | x::xs' as xs -> (e::xs)::[for xs in distribute e xs' -> x::xs]
+
+    // From https://stackoverflow.com/questions/1526046/f-permutations
+    let rec permute =
+        function
+        | [] -> [[]]
+        | e::xs -> List.collect (distribute e) (permute xs)
+
 
 module Map =
     let mapValue f =
