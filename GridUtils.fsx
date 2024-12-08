@@ -11,10 +11,27 @@ type GridIndex =
 
 [<RequireQualifiedAccess>]
 module GridIndex =
+    let zero = { X = 0; Y = 0 }
+
     let moveUp (index: GridIndex) = { index with Y = index.Y - 1 }
     let moveRight (index: GridIndex) = { index with X = index.X + 1 }
     let moveDown (index: GridIndex) = { index with Y = index.Y + 1 }
     let moveLeft (index: GridIndex) = { index with X = index.X - 1 }
+
+    let isWithinGrid (grid: _ Grid) (index: GridIndex) =
+        index.Y >= 0
+        && index.X >= 0
+        && index.Y < List.length grid
+        && index.X < List.length grid[0]
+
+    let isWithinGridLengths (xLength: int, yLength: int) (index: GridIndex) =
+        index.Y >= 0
+        && index.X >= 0
+        && index.Y < yLength
+        && index.X < xLength
+
+    let toString (index: GridIndex) = $"X{index.X}, Y{index.Y}"
+        
 
 [<RequireQualifiedAccess>]
 module Grid =
@@ -22,6 +39,11 @@ module Grid =
         match grid with
         | [] -> true
         | rows -> rows |> List.map List.length |> List.countDistinct = 1
+
+    let lengthX (grid: _ Grid) = List.length grid[0]
+    let lengthY (grid: _ Grid) = List.length grid
+
+    let getLengths (grid: _ Grid) = lengthX grid, lengthY grid
 
     let ofStringSeq (xs: string seq) : char Grid =
         xs
