@@ -139,6 +139,18 @@ module List =
 
         loop [] xs
 
+    /// Returns a list of pairs of values, e.g. [ 1; 2; 3; 4 ] -> [ 1,2; 3,4 ].
+    /// Will error if there is an odd number of values
+    let pairwiseWithoutOverlaps (xs: _ list) =
+        let rec loop acc =
+            function
+            | [] -> List.rev acc
+            | [ _ ] -> failwith "must have an even number of elements"
+            | a :: b :: rest ->
+                loop ((a, b) :: acc) rest
+
+        loop [] xs
+
     let chooseAll f (xs: _ option list) =
         let chosen =
             List.choose f xs
