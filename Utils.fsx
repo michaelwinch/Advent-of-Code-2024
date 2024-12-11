@@ -49,6 +49,29 @@ module String =
         if String.IsNullOrWhiteSpace x then Some () else None
 
 
+module Int32 =
+    let digits (x: int) =
+        if x = 0 then 1
+        else
+            x
+            |> abs
+            |> float
+            |> log10
+            |> int
+            |> (+) 1
+
+module Int64 =
+    let digits (x: int64) =
+        if x = 0 then 1L
+        else
+            x
+            |> abs
+            |> float
+            |> log10
+            |> int64
+            |> (+) 1L
+
+
 module Maths =
     let highestCommonFactor x y =
         let lower, higher = if x < y then x, y else y, x
