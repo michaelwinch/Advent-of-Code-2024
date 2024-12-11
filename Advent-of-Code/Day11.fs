@@ -38,7 +38,7 @@ module Part2 =
 
     type RemainingBlinks = int
     type NumberOfStones = int64
-    type StonesProduced = Dictionary<Stone * RemainingBlinks, NumberOfStones>
+    type StonesProduced = Dictionary<struct (Stone * RemainingBlinks), NumberOfStones>
 
     let rec loop remainingBlinks (stones: Stone list) =
         let stonesProduced = StonesProduced()
@@ -49,7 +49,7 @@ module Part2 =
             else
                 stones
                 |> List.sumBy (fun stone ->
-                    match stonesProduced.TryGetValue ((stone, remainingBlinks)) with
+                    match stonesProduced.TryGetValue (struct (stone, remainingBlinks)) with
                     | true, n -> n
                     | false, _ ->
                         let n =
@@ -65,9 +65,9 @@ module Part2 =
         loop numberOfBlinks stones
 
 
-// Run.example (Part1.run 1, day = 11, part = 1, example = 1) // Part 1 example completed in 2ms with result: 7
-// Run.example (Part1.run 25, day = 11, part = 1, example = 2) // Part 1 example completed in 10ms with result: 55312
-// Run.actual (Part1.run 25, day = 11, part = 1) // Part 1 actual completed in 28ms with result: 172484
+// Run.example (Part1.run 1, day = 11, part = 1, example = 1) // Part 1 example completed in 0ms with result: 7L
+// Run.example (Part1.run 25, day = 11, part = 1, example = 2) // Part 1 example completed in 14ms with result: 55312L
+// Run.actual (Part1.run 25, day = 11, part = 1) // Part 1 actual completed in 56ms with result: 172484L
 //
-// Run.actual (Part2.run 25, day = 11, part = 2) // Part 2 example completed in 3ms with result: 172484L
-// Run.actual (Part2.run 75, day = 11, part = 2) // Part 2 actual completed in 43ms with result: 205913561055242L
+// Run.actual (Part2.run 25, day = 11, part = 2) // Part 2 example completed in 2ms with result: 172484L
+// Run.actual (Part2.run 75, day = 11, part = 2) // Part 2 actual completed in 22ms with result: 205913561055242L

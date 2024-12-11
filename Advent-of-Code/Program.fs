@@ -11,26 +11,26 @@ type Run =
         | Example (day, Some example) -> $"Examples/Day{day}_{example}.txt"
         >> (+) "../../../../Inputs/"
 
-    static member run name f debug run =
+    static member run name f numberOfRuns run =
         let filePath = Run.toFilePath run
-        let runs = if debug then 1 else 10
-        for _ in [1..runs] do
+        for _ in [1..numberOfRuns] do
             let sw = System.Diagnostics.Stopwatch.StartNew ()
             let result = f filePath
             let elapsedMs = sw.ElapsedMilliseconds
             printfn "%s completed in %dms with result: %A" name elapsedMs result
             
-    static member example (f, day: int, part: int, ?example: int, ?debug: bool) =
+    static member example (f, day: int, part: int, ?example: int, ?runs: int) =
         Example (day, example)
-        |> Run.run $"Part {part} example" f (defaultArg debug true)
+        |> Run.run $"Part {part} example" f (defaultArg runs 1)
 
-    static member actual (f, day: int, part: int, ?debug: bool) =
+    static member actual (f, day: int, part: int, ?runs: int) =
         Actual day
-        |> Run.run $"Part {part} actual" f (defaultArg debug false)
+        |> Run.run $"Part {part} actual" f (defaultArg runs 10)
 
+open Day11
 
 [<EntryPoint>]
 let main _ =
-    Run.actual (Day11.Part2.run 75, day = 11, part = 2)
+    Run.actual (Part2.run 75, day = 11, part = 2, runs = 50)
     0
     
