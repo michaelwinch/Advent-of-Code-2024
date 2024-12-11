@@ -1,36 +1,27 @@
-#time
 #load "./Utils.fsx"
 
-open System.IO
 open Utils
 
-let getInput (inputFile: string) =
-    seq {
-        use streamReader = new StreamReader(inputFile)
-        while not streamReader.EndOfStream do
-            yield streamReader.ReadLine()
-    }
-
-let getLocationIds : string seq -> int list * int list =
-    Seq.toList
-    >> List.map (fun x ->
+let getLocationIds (inputFile: string) : int list * int list =
+    inputFile
+    |> File.readStream
+    |> Seq.toList
+    |> List.map (fun x ->
         let xs = x.Split ' '
         int (Seq.head xs), int (Seq.last xs))
-    >> List.unzip
+    |> List.unzip
 
 module Part1 =
     let run inputFile =
-        getInput inputFile
-        |> getLocationIds
-        |> fun (x, y) -> List.sort x, List.sort y
+        getLocationIds inputFile
+        |> fun (xs, ys) -> List.sort xs, List.sort ys
         ||> List.zip
         |> List.sumBy (fun (x, y) -> x - y |> abs)
 
+
 module Part2 =
     let run inputFile =
-        let xs, ys =
-            getInput inputFile
-            |> getLocationIds
+        let xs, ys = getLocationIds inputFile
 
         let yCountMap =
             ys

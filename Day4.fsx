@@ -1,44 +1,50 @@
-#time
 #load "./Utils.fsx"
+#load "./GridUtils.fsx"
 
-open System.IO
 open Utils
+open GridUtils
 
-let getInput (inputFile: string) =
-    seq {
-        use streamReader = new StreamReader(inputFile)
-        while not streamReader.EndOfStream do
-            yield streamReader.ReadLine()
-    }
+type WordSearch = char Grid
+type PotentialWord = char list
+
+let getWordSearch inputFile =
+    File.readStream inputFile
+    |> Grid.ofStringSeq
 
 module Part1 =
-    let getWindows (allChars: char list list) y x currentChar : char list list =
+    let getPotentialWords (wordSearch: WordSearch) (index: GridIndex) currentChar : PotentialWord list =
         let vertical =
             [ yield Some currentChar
               for move in [1..3] do
-                yield List2D.tryGet (y + move) x allChars
-            ]
+                let idx = index |> GridIndex.moveDownN move
+                yield Grid.tryItem idx wordSearch ]
             |> List.chooseAll id
 
         let horizontal =
             [ yield Some currentChar
               for move in [1..3] do
-                yield List2D.tryGet y (x + move) allChars
-            ]
+                let idx = index |> GridIndex.moveRightN move
+                yield Grid.tryItem idx wordSearch ]
             |> List.chooseAll id
 
         let diagonalRight =
             [ yield Some currentChar
               for move in [1..3] do
-                yield List2D.tryGet (y + move) (x + move) allChars
-            ]
+                let idx =
+                    index
+                    |> GridIndex.moveDownN move
+                    |> GridIndex.moveRightN move
+                yield Grid.tryItem idx wordSearch ]
             |> List.chooseAll id
 
         let diagonalLeft =
             [ yield Some currentChar
               for move in [1..3] do
-                yield List2D.tryGet (y + move) (x - move) allChars
-            ]
+                let idx =
+                    index
+                    |> GridIndex.moveDownN move
+                    |> GridIndex.moveLeftN move
+                yield Grid.tryItem idx wordSearch ]
             |> List.chooseAll id
 
         [ vertical
@@ -53,49 +59,48 @@ module Part1 =
         window = xmas || window = samx
 
     let run inputFile =
-        let allChars =
-            getInput inputFile
-            |> List.ofSeq
-            |> List.map (_.ToCharArray() >> List.ofArray)
+        let wordSearch = getWordSearch inputFile
 
-        allChars
-        |> List2D.mapi (getWindows allChars)
-        |> List.collect id
-        |> List.collect id
+        wordSearch
+        |> Grid.mapi (getPotentialWords wordSearch)
+        |> Grid.collect id
         |> List.countIf isXmas
+
 
 module Part2 =
-    let getX (allChars: char list list) y x currentChar : char list list =
-        if not (currentChar = 'A') then []
+    [<Struct>]
+    type PotentialX =
+        { Line1: char list
+          Line2: char list }
+        
+    let getX (wordSearch: WordSearch) (index: GridIndex) currentChar : PotentialX option =
+        if not (currentChar = 'A') then None
         else
-            [ [ yield List2D.tryGet (y - 1) (x - 1) allChars
-                yield List2D.tryGet (y + 1) (x + 1) allChars ]
-              |> List.choose id
+            { Line1 =
+                [ Grid.tryItem (GridIndex.move { X = -1; Y = -1 } index) wordSearch
+                  Grid.tryItem (GridIndex.move { X = 1; Y = 1 } index) wordSearch ]
+                |> List.choose id
+              Line2 =
+                [ Grid.tryItem (GridIndex.move { X = 1; Y = -1 } index) wordSearch
+                  Grid.tryItem (GridIndex.move { X = -1; Y = 1 } index) wordSearch ]
+                |> List.choose id }
+            |> Some
 
-              [ yield List2D.tryGet (y - 1) (x + 1) allChars
-                yield List2D.tryGet (y + 1) (x - 1) allChars ]
-              |> List.choose id ]
-
-    let isXmas (x: char list list) =
+    let isXmas (x: PotentialX) =
         let containsMS l = List.contains 'M' l && List.contains 'S' l
-        match x with
-        | [ a; b ] -> containsMS a && containsMS b
-        | _ -> failwith "invalid X"
+        containsMS x.Line1 && containsMS x.Line2
 
     let run inputFile =
-        let allChars =
-            getInput inputFile
-            |> List.ofSeq
-            |> List.map (_.ToCharArray() >> List.ofArray)
+        let wordSearch = getWordSearch inputFile
 
-        allChars
-        |> List2D.mapi (getX allChars)
-        |> List.collect id
-        |> List.filter (List.isEmpty >> not)
+        wordSearch
+        |> Grid.mapi (getX wordSearch)
+        |> Grid.choose id
         |> List.countIf isXmas
 
-Run.example (Part1.run, day = 4, part = 1, debug = true) // Part 1 example completed in 4ms with result: 18
-Run.actual (Part1.run, day = 4, part = 1) // Part 1 actual completed in 73ms with result: 2500
 
-Run.example (Part2.run, day = 4, part = 2, debug = true) // Part 2 example completed in 3ms with result: 9
+Run.example (Part1.run, day = 4, part = 1) // Part 1 example completed in 4ms with result: 18
+Run.actual (Part1.run, day = 4, part = 1) // Part 1 actual completed in 129ms with result: 2500
+
+Run.example (Part2.run, day = 4, part = 2) // Part 2 example completed in 3ms with result: 9
 Run.actual (Part2.run, day = 4, part = 2) // Part 2 actual completed in 7ms with result: 1933

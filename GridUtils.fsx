@@ -13,10 +13,20 @@ type GridIndex =
 module GridIndex =
     let zero = { X = 0; Y = 0 }
 
+    let move (moveBy: GridIndex) (index: GridIndex) =
+        { index with
+            X = index.X + moveBy.X
+            Y = index.Y + moveBy.Y }
+
     let moveUp (index: GridIndex) = { index with Y = index.Y - 1 }
     let moveRight (index: GridIndex) = { index with X = index.X + 1 }
     let moveDown (index: GridIndex) = { index with Y = index.Y + 1 }
     let moveLeft (index: GridIndex) = { index with X = index.X - 1 }
+
+    let moveUpN n (index: GridIndex) = { index with Y = index.Y - n }
+    let moveRightN n (index: GridIndex) = { index with X = index.X + n }
+    let moveDownN n (index: GridIndex) = { index with Y = index.Y + n }
+    let moveLeftN n (index: GridIndex) = { index with X = index.X - n }
 
     let isWithinGrid (grid: _ Grid) (index: GridIndex) =
         index.Y >= 0
@@ -80,3 +90,13 @@ module Grid =
     let updateAt (index: GridIndex) (value: 'a) (grid: 'a Grid) : 'a Grid =
         let newRow = List.updateAt index.X value grid[index.Y]
         List.updateAt index.Y newRow grid
+
+    let collect (f: 'a -> 'b list) (grid: 'a Grid) : 'b list =
+        grid
+        |> List.collect id
+        |> List.collect f
+
+    let choose (f: 'a -> 'b option) (grid: 'a Grid) : 'b list =
+        grid
+        |> List.collect id
+        |> List.choose f

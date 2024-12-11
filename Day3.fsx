@@ -1,15 +1,6 @@
-#time
 #load "./Utils.fsx"
 
-open System.IO
 open Utils
-
-let getInput (inputFile: string) =
-    seq {
-        use streamReader = new StreamReader(inputFile)
-        while not streamReader.EndOfStream do
-            yield streamReader.ReadLine()
-    }
 
 module Part1 =
     type Instruction =
@@ -25,11 +16,12 @@ module Part1 =
         >> List.map (fun x -> Multiply (int x.Groups[1].Value, int x.Groups[2].Value))
     
     let run inputFile =
-        getInput inputFile
+        File.readStream inputFile
         |> List.ofSeq
         |> List.collect getInstructions
         |> List.map Instruction.execute
         |> List.sum
+
 
 module Part2 =
     type Instruction =
@@ -61,7 +53,7 @@ module Part2 =
         |> List.map snd
 
     let run inputFile =
-        getInput inputFile
+        File.readStream inputFile
         |> List.ofSeq
         |> List.collect getInstructions
         |> List.fold (fun (enabled, acc: int) instruction ->
@@ -75,6 +67,7 @@ module Part2 =
                 enabled, acc)
             (true, 0)
         |> snd
+
 
 Run.example (Part1.run, day = 3, part = 1, example = 1) // Part 1 example completed in 1ms with result: 161
 Run.actual (Part1.run, day = 3, part = 1) // Part 1 actual completed in 1ms with result: 164730528
