@@ -1,6 +1,4 @@
-#load "./Utils.fsx"
-
-open Utils
+module Advent_of_Code.Day01
 
 let getLocationIds (inputFile: string) : int list * int list =
     inputFile
@@ -37,8 +35,8 @@ module Part2 =
         |> List.sum
 
 
-Run.example (Part1.run, day = 1, part = 1) // Part 1 example completed in 0ms with result: 11
-Run.actual (Part1.run, day = 1, part = 1) // Part 1 actual completed in 0ms with result: 1646452
-
-Run.example (Part2.run, day = 1, part = 2) // Part 2 example completed in 0ms with result: 31
-Run.actual (Part2.run, day = 1, part = 2) // Part 2 actual completed in 1ms with result: 23609874
+// Run.example (Part1.run, day = 1, part = 1) // Part 1 example completed in 0ms with result: 11
+// Run.actual (Part1.run, day = 1, part = 1) // Part 1 actual completed in 0ms with result: 1646452
+//
+// Run.example (Part2.run, day = 1, part = 2) // Part 2 example completed in 0ms with result: 31
+// Run.actual (Part2.run, day = 1, part = 2) // Part 2 actual completed in 1ms with result: 23609874

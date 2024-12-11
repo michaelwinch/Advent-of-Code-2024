@@ -1,8 +1,4 @@
-#load "./Utils.fsx"
-#load "./GridUtils.fsx"
-
-open Utils
-open GridUtils
+module Advent_of_Code.Day04
 
 type WordSearch = char Grid
 type PotentialWord = char list
@@ -99,8 +95,8 @@ module Part2 =
         |> List.countIf isXmas
 
 
-Run.example (Part1.run, day = 4, part = 1) // Part 1 example completed in 4ms with result: 18
-Run.actual (Part1.run, day = 4, part = 1) // Part 1 actual completed in 129ms with result: 2500
-
-Run.example (Part2.run, day = 4, part = 2) // Part 2 example completed in 3ms with result: 9
-Run.actual (Part2.run, day = 4, part = 2) // Part 2 actual completed in 7ms with result: 1933
+// Run.example (Part1.run, day = 4, part = 1) // Part 1 example completed in 4ms with result: 18
+// Run.actual (Part1.run, day = 4, part = 1) // Part 1 actual completed in 129ms with result: 2500
+//
+// Run.example (Part2.run, day = 4, part = 2) // Part 2 example completed in 3ms with result: 9
+// Run.actual (Part2.run, day = 4, part = 2) // Part 2 actual completed in 7ms with result: 1933

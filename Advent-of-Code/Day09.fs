@@ -1,6 +1,4 @@
-#load "./Utils.fsx"
-
-open Utils
+module Advent_of_Code.Day09
 
 [<Struct>]
 type DenseFile =
@@ -143,8 +141,8 @@ module Part2 =
         |> calculateChecksum
 
         
-Run.example (Part1.run, day = 9, part = 1, example = 1) // Part 1 example completed in 3ms with result: 1928L
-Run.actual (Part1.run, day = 9, part = 1) // Part 1 actual completed in 20907ms with result: 6353658451014L
-
-Run.example (Part2.run, day = 9, part = 2, example = 1) // Part 2 example completed in 6ms with result: 2858L
-Run.actual (Part2.run, day = 9, part = 2) // Part 2 actual completed in 2092ms with result: 6382582136592L
+// Run.example (Part1.run, day = 9, part = 1, example = 1) // Part 1 example completed in 3ms with result: 1928L
+// Run.actual (Part1.run, day = 9, part = 1) // Part 1 actual completed in 20907ms with result: 6353658451014L
+//
+// Run.example (Part2.run, day = 9, part = 2, example = 1) // Part 2 example completed in 6ms with result: 2858L
+// Run.actual (Part2.run, day = 9, part = 2) // Part 2 actual completed in 2092ms with result: 6382582136592L

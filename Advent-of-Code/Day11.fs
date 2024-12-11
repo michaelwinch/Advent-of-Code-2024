@@ -1,6 +1,4 @@
-#load "./Utils.fsx"
-
-open Utils
+module Advent_of_Code.Day11
 
 type Stone = int64
 
@@ -66,10 +64,10 @@ module Part2 =
         let stones = getStones inputFile
         loop numberOfBlinks stones
 
-        
-Run.example (Part1.run 1, day = 11, part = 1, example = 1) // Part 1 example completed in 2ms with result: 7
-Run.example (Part1.run 25, day = 11, part = 1, example = 2) // Part 1 example completed in 10ms with result: 55312
-Run.actual (Part1.run 25, day = 11, part = 1) // Part 1 actual completed in 28ms with result: 172484
 
-Run.actual (Part2.run 25, day = 11, part = 2) // Part 2 example completed in 3ms with result: 172484L
-Run.actual (Part2.run 75, day = 11, part = 2) // Part 2 actual completed in 43ms with result: 205913561055242L
+// Run.example (Part1.run 1, day = 11, part = 1, example = 1) // Part 1 example completed in 2ms with result: 7
+// Run.example (Part1.run 25, day = 11, part = 1, example = 2) // Part 1 example completed in 10ms with result: 55312
+// Run.actual (Part1.run 25, day = 11, part = 1) // Part 1 actual completed in 28ms with result: 172484
+//
+// Run.actual (Part2.run 25, day = 11, part = 2) // Part 2 example completed in 3ms with result: 172484L
+// Run.actual (Part2.run 75, day = 11, part = 2) // Part 2 actual completed in 43ms with result: 205913561055242L

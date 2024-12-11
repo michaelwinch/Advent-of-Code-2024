@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <RootNamespace>Advent_of_Tests</RootNamespace>
+
+        <IsPackable>false</IsPackable>
+        <GenerateProgramFile>false</GenerateProgramFile>
+        <IsTestProject>true</IsTestProject>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="Utils.fs" />
+        <Compile Include="Day01Tests.fs" />
+        <Compile Include="Day02Tests.fs" />
+        <Compile Include="Day03Tests.fs" />
+        <Compile Include="Day04Tests.fs" />
+        <Compile Include="Day05Tests.fs" />
+        <Compile Include="Day06Tests.fs" />
+        <Compile Include="Day07Tests.fs" />
+        <Compile Include="Day08Tests.fs" />
+        <Compile Include="Day09Tests.fs" />
+        <Compile Include="Day10Tests.fs" />
+        <Compile Include="Day11Tests.fs" />
+        <Compile Include="Program.fs"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector" Version="6.0.0"/>
+        <PackageReference Include="FsUnit.xUnit" Version="6.0.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0"/>
+        <PackageReference Include="xunit" Version="2.5.3"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Advent-of-Code\Advent-of-Code.fsproj" />
+    </ItemGroup>
+
+</Project>

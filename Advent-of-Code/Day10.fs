@@ -1,8 +1,4 @@
-#load "./Utils.fsx"
-#load "./GridUtils.fsx"
-
-open Utils
-open GridUtils
+module Advent_of_Code.Day10
 
 type Map = Grid<int>
 
@@ -79,8 +75,8 @@ module Part2 =
         |> List.sumBy (getTrailHeadScore map)
 
         
-Run.example (Part1.run, day = 10, part = 1) // Part 1 example completed in 1ms with result: 1
-Run.actual (Part1.run, day = 10, part = 1) // Part 1 actual completed in 8ms with result: 746
-
-Run.example (Part2.run, day = 10, part = 2) // Part 2 example completed in 1ms with result: 16
-Run.actual (Part2.run, day = 10, part = 2) // Part 2 actual completed in 8ms with result: 1541
+// Run.example (Part1.run, day = 10, part = 1) // Part 1 example completed in 1ms with result: 1
+// Run.actual (Part1.run, day = 10, part = 1) // Part 1 actual completed in 8ms with result: 746
+//
+// Run.example (Part2.run, day = 10, part = 2) // Part 2 example completed in 1ms with result: 16
+// Run.actual (Part2.run, day = 10, part = 2) // Part 2 actual completed in 8ms with result: 1541

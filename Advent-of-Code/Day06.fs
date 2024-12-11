@@ -1,9 +1,6 @@
-#load "./Utils.fsx"
-#load "./GridUtils.fsx"
+module Advent_of_Code.Day06
 
 open System.Collections.Generic
-open Utils
-open GridUtils
 
 type Map = char Grid
 type Coordinates = GridIndex
@@ -144,8 +141,8 @@ module Part2 =
         |> List.countIf (hasLoop startingCoords startingDirection map)
 
         
-Run.example (Part1.run, day = 6, part = 1) // Part 1 example completed in 1ms with result: 41
-Run.actual (Part1.run, day = 6, part = 1) // Part 1 example completed in 5ms with result: 4647
-
-Run.example (Part2.run, day = 6, part = 2) // Part 2 example completed in 1ms with result: 6
-Run.actual (Part2.run, day = 6, part = 2) // Part 2 actual completed in 3126ms with result: 1723
+// Run.example (Part1.run, day = 6, part = 1) // Part 1 example completed in 1ms with result: 41
+// Run.actual (Part1.run, day = 6, part = 1) // Part 1 example completed in 5ms with result: 4647
+//
+// Run.example (Part2.run, day = 6, part = 2) // Part 2 example completed in 1ms with result: 6
+// Run.actual (Part2.run, day = 6, part = 2) // Part 2 actual completed in 3126ms with result: 1723

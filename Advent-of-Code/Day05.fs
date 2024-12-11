@@ -1,6 +1,4 @@
-#load "./Utils.fsx"
-
-open Utils
+module Advent_of_Code.Day05
 
 type OrderingRule =
     { X: int
@@ -86,8 +84,8 @@ module Part2 =
         |> List.sumBy UpdatePages.getMiddlePage
 
 
-Run.example (Part1.run, day = 5, part = 1) // Part 1 example completed in 1ms with result: 143
-Run.actual (Part1.run, day = 5, part = 1) // Part 1 actual completed in 15ms with result: 4766
-
-Run.example (Part2.run, day = 5, part = 2) // Part 2 example completed in 0ms with result: 123
-Run.actual (Part2.run, day = 5, part = 2) // Part 2 actual completed in 49ms with result: 6257
+// Run.example (Part1.run, day = 5, part = 1) // Part 1 example completed in 1ms with result: 143
+// Run.actual (Part1.run, day = 5, part = 1) // Part 1 actual completed in 15ms with result: 4766
+//
+// Run.example (Part2.run, day = 5, part = 2) // Part 2 example completed in 0ms with result: 123
+// Run.actual (Part2.run, day = 5, part = 2) // Part 2 actual completed in 49ms with result: 6257

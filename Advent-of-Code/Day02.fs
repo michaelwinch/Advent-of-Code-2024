@@ -1,6 +1,4 @@
-#load "./Utils.fsx"
-
-open Utils
+module Advent_of_Code.Day02
 
 let getReports (inputFile: string) : int list list =
     inputFile
@@ -66,8 +64,8 @@ module Part2 =
         |> List.countIf isReportSafeWithRemovals
 
 
-Run.example (Part1.run, day = 2, part = 1) // Part 1 example completed in 0ms with result: 2
-Run.actual (Part1.run, day = 2, part = 1) // Part 1 actual completed in 1ms with result: 236
-
-Run.example (Part2.run, day = 2, part = 2) // Part 2 example completed in 0ms with result: 4
-Run.actual (Part2.run, day = 2, part = 2) // Part 2 actual completed in 2ms with result: 308
+// Run.example (Part1.run, day = 2, part = 1) // Part 1 example completed in 0ms with result: 2
+// Run.actual (Part1.run, day = 2, part = 1) // Part 1 actual completed in 1ms with result: 236
+//
+// Run.example (Part2.run, day = 2, part = 2) // Part 2 example completed in 0ms with result: 4
+// Run.actual (Part2.run, day = 2, part = 2) // Part 2 actual completed in 2ms with result: 308

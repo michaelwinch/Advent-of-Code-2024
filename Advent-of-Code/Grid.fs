@@ -1,6 +1,4 @@
-#load "./Utils.fsx"
-
-open Utils
+namespace Advent_of_Code
 
 type Grid<'a> = 'a list list
 

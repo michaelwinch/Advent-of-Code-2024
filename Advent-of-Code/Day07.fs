@@ -1,6 +1,4 @@
-#load "./Utils.fsx"
-
-open Utils
+module Advent_of_Code.Day07
 
 type PartialEquation =
     { Answer: int64
@@ -59,8 +57,8 @@ module Part2 =
         |> List.sum
 
         
-Run.example (Part1.run, day = 7, part = 1) // Part 1 example completed in 1ms with result: 3749L
-Run.actual (Part1.run, day = 7, part = 1) // Part 1 example completed in 8ms with result: 1153997401072L
-
-Run.example (Part2.run, day = 7, part = 2) // Part 2 example completed in 2ms with result: 11387L
-Run.actual (Part2.run, day = 7, part = 2) // Part 2 actual completed in 254ms with result: 97902809384118L
+// Run.example (Part1.run, day = 7, part = 1) // Part 1 example completed in 1ms with result: 3749L
+// Run.actual (Part1.run, day = 7, part = 1) // Part 1 example completed in 8ms with result: 1153997401072L
+//
+// Run.example (Part2.run, day = 7, part = 2) // Part 2 example completed in 2ms with result: 11387L
+// Run.actual (Part2.run, day = 7, part = 2) // Part 2 actual completed in 254ms with result: 97902809384118L

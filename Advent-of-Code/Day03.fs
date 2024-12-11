@@ -1,6 +1,4 @@
-#load "./Utils.fsx"
-
-open Utils
+module Advent_of_Code.Day03
 
 module Part1 =
     type Instruction =
@@ -69,8 +67,8 @@ module Part2 =
         |> snd
 
 
-Run.example (Part1.run, day = 3, part = 1, example = 1) // Part 1 example completed in 1ms with result: 161
-Run.actual (Part1.run, day = 3, part = 1) // Part 1 actual completed in 1ms with result: 164730528
-
-Run.example (Part2.run, day = 3, part = 2, example = 2) // Part 2 example completed in 1ms with result: 48
-Run.actual (Part2.run, day = 3, part = 2) // Part 2 actual completed in 1ms with result: 70478672
+// Run.example (Part1.run, day = 3, part = 1, example = 1) // Part 1 example completed in 1ms with result: 161
+// Run.actual (Part1.run, day = 3, part = 1) // Part 1 actual completed in 1ms with result: 164730528
+//
+// Run.example (Part2.run, day = 3, part = 2, example = 2) // Part 2 example completed in 1ms with result: 48
+// Run.actual (Part2.run, day = 3, part = 2) // Part 2 actual completed in 1ms with result: 70478672

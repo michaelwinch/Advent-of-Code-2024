@@ -1,9 +1,4 @@
-#load "./Utils.fsx"
-#load "./GridUtils.fsx"
-
-open Utils
-open GridUtils
-
+module Advent_of_Code.Day08
 
 type AntinodeLocations = Set<GridIndex>
 
@@ -94,8 +89,8 @@ module Part2 =
         |> Set.count
 
         
-Run.example (Part1.run, day = 8, part = 1, example = 1) // Part 1 actual completed in 4ms with result: 14
-Run.actual (Part1.run, day = 8, part = 1) // Part 1 actual completed in 17ms with result: 273
-
-Run.example (Part2.run, day = 8, part = 2, example = 1) // Part 2 example completed in 4ms with result: 34
-Run.actual (Part2.run, day = 8, part = 2) // Part 2 actual completed in 18ms with result: 1017
+// Run.example (Part1.run, day = 8, part = 1, example = 1) // Part 1 actual completed in 4ms with result: 14
+// Run.actual (Part1.run, day = 8, part = 1) // Part 1 actual completed in 17ms with result: 273
+//
+// Run.example (Part2.run, day = 8, part = 2, example = 1) // Part 2 example completed in 4ms with result: 34
+// Run.actual (Part2.run, day = 8, part = 2) // Part 2 actual completed in 18ms with result: 1017
