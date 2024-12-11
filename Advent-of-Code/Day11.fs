@@ -1,5 +1,7 @@
 module Advent_of_Code.Day11
 
+open System
+
 type Stone = int64
 
 let getStones inputFile : Stone list =
@@ -11,10 +13,9 @@ let getStones inputFile : Stone list =
 let evolveStone (stone: Stone) : Stone list =
     match stone with
     | 0L -> [ 1L ]
-    | x when Int64.digits x % 2L = 0 ->
-        let str = string x
-        [ int64 (str.Substring(0, str.Length / 2))
-          int64 (str.Substring(str.Length / 2)) ]
+    | Int64.NumberOfDigits digits when digits % 2 = 0 ->
+        let struct (left, right) = Int64.DivRem(stone, pown 10 (digits / 2))
+        [ left; right ]
     | x -> [ x * 2024L ]
 
 
@@ -67,7 +68,7 @@ module Part2 =
 
 // Run.example (Part1.run 1, day = 11, part = 1, example = 1) // Part 1 example completed in 0ms with result: 7L
 // Run.example (Part1.run 25, day = 11, part = 1, example = 2) // Part 1 example completed in 14ms with result: 55312L
-// Run.actual (Part1.run 25, day = 11, part = 1) // Part 1 actual completed in 56ms with result: 172484L
+// Run.actual (Part1.run 25, day = 11, part = 1) // Part 1 actual completed in 38ms with result: 172484L
 //
 // Run.actual (Part2.run 25, day = 11, part = 2) // Part 2 example completed in 2ms with result: 172484L
-// Run.actual (Part2.run 75, day = 11, part = 2) // Part 2 actual completed in 22ms with result: 205913561055242L
+// Run.actual (Part2.run 75, day = 11, part = 2) // Part 2 actual completed in 18ms with result: 205913561055242L

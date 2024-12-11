@@ -31,6 +31,6 @@ open Day11
 
 [<EntryPoint>]
 let main _ =
-    Run.actual (Part2.run 75, day = 11, part = 2, runs = 50)
+    Run.actual (Part1.run 25, day = 11, part = 1, runs = 50)
     0
     

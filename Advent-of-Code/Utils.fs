@@ -39,14 +39,16 @@ module Int32 =
 
 module Int64 =
     let digits (x: int64) =
-        if x = 0 then 1L
+        if x = 0 then 1
         else
             x
             |> abs
             |> float
             |> log10
-            |> int64
-            |> (+) 1L
+            |> int
+            |> (+) 1
+
+    let (|NumberOfDigits|) = digits
 
 
 module Maths =
