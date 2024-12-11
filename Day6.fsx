@@ -1,17 +1,9 @@
 #load "./Utils.fsx"
-#load "./Grid.fsx"
+#load "./GridUtils.fsx"
 
 open System.Collections.Generic
-open System.IO
 open Utils
-open Grid
-
-let getInput (inputFile: string) =
-    seq {
-        use streamReader = new StreamReader(inputFile)
-        while not streamReader.EndOfStream do
-            yield streamReader.ReadLine()
-    }
+open GridUtils
 
 type Map = char Grid
 type Coordinates = GridIndex
@@ -22,32 +14,32 @@ type Direction =
     | Down
     | Left
 
-    module Direction =
-        let charList =
-            [ '^'; '>'; 'v'; 'V'; '<' ]
+module Direction =
+    let charList =
+        [ '^'; '>'; 'v'; 'V'; '<' ]
 
-        let ofChar =
-            function
-            | '^' -> Up
-            | '>' -> Right
-            | 'v' | 'V' -> Down
-            | '<' -> Left
-            | x -> failwithf "unknown direction %c" x
+    let ofChar =
+        function
+        | '^' -> Up
+        | '>' -> Right
+        | 'v' | 'V' -> Down
+        | '<' -> Left
+        | x -> failwithf "unknown direction %c" x
 
-        let advanceCoordinates (coords: Coordinates) direction : Coordinates =
-            match direction with
-            | Up -> GridIndex.moveUp
-            | Right -> GridIndex.moveRight
-            | Down -> GridIndex.moveDown
-            | Left -> GridIndex.moveLeft
-            |> fun moveF -> moveF coords
+    let advanceCoordinates (coords: Coordinates) direction : Coordinates =
+        match direction with
+        | Up -> GridIndex.moveUp
+        | Right -> GridIndex.moveRight
+        | Down -> GridIndex.moveDown
+        | Left -> GridIndex.moveLeft
+        |> fun moveF -> moveF coords
 
-        let turnRight =
-            function
-            | Up -> Right
-            | Right -> Down
-            | Down -> Left
-            | Left -> Up
+    let turnRight =
+        function
+        | Up -> Right
+        | Right -> Down
+        | Down -> Left
+        | Left -> Up
 
 let obstacle = '#'
 
@@ -57,6 +49,10 @@ let getStartingCoords (map: Map) : Coordinates =
 let getStartingDirection (coords: Coordinates) (map: Map) =
     Grid.item coords map
     |> Direction.ofChar
+
+let getMap inputFile =
+    File.readStream inputFile
+    |> Grid.ofStringSeq
 
 module Part1 =
     let calculatePath startingCoords startingDirection (map: Map) =
@@ -80,10 +76,7 @@ module Part1 =
         |> fun visited -> startingCoords :: visited
 
     let run inputFile =
-        let map =
-            getInput inputFile
-            |> List2D.ofStringSeq
-
+        let map = getMap inputFile
         let startingCoords = getStartingCoords map
         let startingDirection = getStartingDirection startingCoords map
 
@@ -142,16 +135,14 @@ module Part2 =
         loop (VisitedObstacles.empty()) startingCoords startingDirection
 
     let run inputFile =
-        let map =
-            getInput inputFile
-            |> List2D.ofStringSeq
-            
+        let map = getMap inputFile
         let startingCoords = getStartingCoords map
         let startingDirection = getStartingDirection startingCoords map
 
         map
         |> getObstacleCoordinatesToTest startingCoords startingDirection
         |> List.countIf (hasLoop startingCoords startingDirection map)
+
         
 Run.example (Part1.run, day = 6, part = 1) // Part 1 example completed in 1ms with result: 41
 Run.actual (Part1.run, day = 6, part = 1) // Part 1 example completed in 5ms with result: 4647

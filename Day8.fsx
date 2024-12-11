@@ -91,7 +91,6 @@ module Part2 =
         |> Grid.mapi (findAntinodes map)
         |> List.collect id
         |> List.reduce (+)
-        |> tee (Set.map GridIndex.toString >> printfn "SET %A")
         |> Set.count
 
         

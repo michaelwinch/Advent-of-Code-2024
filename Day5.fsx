@@ -1,15 +1,6 @@
-#time
 #load "./Utils.fsx"
 
-open System.IO
 open Utils
-
-let getInput (inputFile: string) =
-    seq {
-        use streamReader = new StreamReader(inputFile)
-        while not streamReader.EndOfStream do
-            yield streamReader.ReadLine()
-    }
 
 type OrderingRule =
     { X: int
@@ -22,6 +13,7 @@ module UpdatePages =
         let middleIdx = (pages.Length - 1) / 2
         pages[middleIdx]
 
+
 let parseInput (input: string seq) : OrderingRule list * UpdatePages list =
     Seq.foldBack
         (fun line (rulesAcc, pagesAcc) ->
@@ -30,7 +22,7 @@ let parseInput (input: string seq) : OrderingRule list * UpdatePages list =
                 let rule =
                     { X = int groups[1].Value
                       Y = int groups[2].Value }
-                rule:: rulesAcc, pagesAcc
+                rule :: rulesAcc, pagesAcc
             | Regex.Matches "(?:(\d+),?)" matches ->
                 let pages =
                     matches
@@ -41,6 +33,10 @@ let parseInput (input: string seq) : OrderingRule list * UpdatePages list =
             | _ -> rulesAcc, pagesAcc)
         input
         ([], [])
+
+let getOrderingRulesAndUpdatePages inputFile =
+    File.readStream inputFile
+    |> parseInput
 
 let isInCorrectOrder (rules: OrderingRule list) (pages: UpdatePages) =
     rules
@@ -53,13 +49,12 @@ let isInCorrectOrder (rules: OrderingRule list) (pages: UpdatePages) =
 
 module Part1 =
     let run inputFile =
-        let orderRules, updatePages =
-            getInput inputFile
-            |> parseInput
+        let orderRules, updatePages = getOrderingRulesAndUpdatePages inputFile
 
         updatePages
         |> List.filter (isInCorrectOrder orderRules)
         |> List.sumBy UpdatePages.getMiddlePage
+
 
 module Part2 =
     let reorderPass (rules: OrderingRule list) (pages: UpdatePages) : UpdatePages =
@@ -83,17 +78,16 @@ module Part2 =
         loop pages
 
     let run inputFile =
-        let orderRules, updatePages =
-            getInput inputFile
-            |> parseInput
+        let orderRules, updatePages = getOrderingRulesAndUpdatePages inputFile
 
         updatePages
         |> List.filter (isInCorrectOrder orderRules >> not)
         |> List.map (reorderUpdatePages orderRules)
         |> List.sumBy UpdatePages.getMiddlePage
 
-Run.example (Part1.run, day = 5, part = 1, debug = false) // Part 1 example completed in 1ms with result: 143
+
+Run.example (Part1.run, day = 5, part = 1) // Part 1 example completed in 1ms with result: 143
 Run.actual (Part1.run, day = 5, part = 1) // Part 1 actual completed in 15ms with result: 4766
 
-Run.example (Part2.run, day = 5, part = 2, debug = false) // Part 2 example completed in 0ms with result: 123
+Run.example (Part2.run, day = 5, part = 2) // Part 2 example completed in 0ms with result: 123
 Run.actual (Part2.run, day = 5, part = 2) // Part 2 actual completed in 49ms with result: 6257
