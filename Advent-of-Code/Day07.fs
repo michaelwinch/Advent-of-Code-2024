@@ -43,7 +43,7 @@ module Part2 =
             | [] -> acc = eq.Answer
             | curr :: rest ->
                 loop (acc + curr) rest
-                || loop (string acc + string curr |> int64) rest
+                || loop (Int64.concat acc curr) rest
                 || loop (acc * curr) rest
 
         loop (List.head eq.Parts) (List.tail eq.Parts)
@@ -61,4 +61,4 @@ module Part2 =
 // Run.actual (Part1.run, day = 7, part = 1) // Part 1 example completed in 8ms with result: 1153997401072L
 //
 // Run.example (Part2.run, day = 7, part = 2) // Part 2 example completed in 2ms with result: 11387L
-// Run.actual (Part2.run, day = 7, part = 2) // Part 2 actual completed in 254ms with result: 97902809384118L
+// Run.actual (Part2.run, day = 7, part = 2) // Part 2 actual completed in 52ms with result: 97902809384118L

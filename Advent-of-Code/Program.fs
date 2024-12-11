@@ -27,10 +27,9 @@ type Run =
         Actual day
         |> Run.run $"Part {part} actual" f (defaultArg runs 10)
 
-open Day11
 
 [<EntryPoint>]
 let main _ =
-    Run.actual (Part1.run 25, day = 11, part = 1, runs = 50)
+    Run.actual (Day07.Part2.run, day = 7, part = 2, runs = 10)
     0
     

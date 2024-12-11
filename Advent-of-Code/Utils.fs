@@ -50,6 +50,9 @@ module Int64 =
 
     let (|NumberOfDigits|) = digits
 
+    let concat (prefix: int64) (suffix: int64) =
+        prefix * pown 10L (digits suffix) + suffix
+
 
 module Maths =
     let highestCommonFactor x y =
