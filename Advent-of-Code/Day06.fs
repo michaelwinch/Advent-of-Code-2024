@@ -5,6 +5,7 @@ open System.Collections.Generic
 type Map = char Grid
 type Coordinates = GridIndex
 
+[<Struct>]
 type Direction =
     | Up
     | Right
@@ -38,6 +39,7 @@ module Direction =
         | Down -> Left
         | Left -> Up
 
+[<Literal>]
 let obstacle = '#'
 
 let getStartingCoords (map: Map) : Coordinates =
@@ -89,47 +91,34 @@ module Part2 =
         |> List.distinct
         |> List.except [startingCoords]
 
-    type VisitedObstacles = HashSet<Coordinates * Direction>
-
-    module VisitedObstacles =
-        let empty() = HashSet<Coordinates * Direction>()
-
-        let contains coords direction (visited: VisitedObstacles) =
-            visited.Contains (coords, direction)
-
-        let add coords direction (visited: VisitedObstacles) =
-            let wasAdded = visited.Add (coords, direction)
-            visited, wasAdded
-            
+    type VisitedObstacles = HashSet<struct (Coordinates * Direction)>
 
     let hasLoop startingCoords startingDirection (map: Map) (obstacleCoords: Coordinates) =
         let map = Grid.updateAt obstacleCoords obstacle map
+        let visitedObstacles : VisitedObstacles = HashSet()
 
-        let rec loop visitedObstacles coords direction =
+        let rec loop coords direction =
             let newCoords = Direction.advanceCoordinates coords direction
             match Grid.tryItem newCoords map with
             | None -> false
             | Some v when not (v = obstacle) ->
-                loop visitedObstacles newCoords direction
+                loop newCoords direction
             | Some _ ->
-                let visitedObstacles, wasAdded = VisitedObstacles.add coords direction visitedObstacles
-                if not wasAdded then true
+                let newVisit = visitedObstacles.Add (struct (coords, direction))
+                if not newVisit then true
                 else
                     let direction = Direction.turnRight direction
                     let newCoords = Direction.advanceCoordinates coords direction
                     match Grid.tryItem newCoords map with
                     | None -> false
                     | Some v when not (v = obstacle) ->
-                        loop visitedObstacles newCoords direction
+                        loop newCoords direction
                     | Some _ ->
-                        let visitedObstacles, wasAdded = VisitedObstacles.add coords direction visitedObstacles
-                        if not wasAdded then true
-                        else
-                            let direction = Direction.turnRight direction
-                            let newCoords = Direction.advanceCoordinates coords direction
-                            loop visitedObstacles newCoords direction
+                        let direction = Direction.turnRight direction
+                        let newCoords = Direction.advanceCoordinates coords direction
+                        loop newCoords direction
 
-        loop (VisitedObstacles.empty()) startingCoords startingDirection
+        loop startingCoords startingDirection
 
     let run inputFile =
         let map = getMap inputFile

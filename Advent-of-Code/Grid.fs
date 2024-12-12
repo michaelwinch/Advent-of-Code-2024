@@ -80,9 +80,7 @@ module Grid =
         |> Option.bind (List.tryItem index.X)
 
     let tryItemV (index: GridIndex) (grid: 'a Grid) : 'a ValueOption =
-        grid
-        |> List.tryItem index.Y
-        |> Option.bind (List.tryItem index.X)
+        tryItem index grid
         |> ValueOption.ofOption
 
     let map (f: 'a -> 'b) (grid: 'a Grid) : 'b Grid =
