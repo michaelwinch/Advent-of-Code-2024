@@ -39,6 +39,12 @@ module GridIndex =
         && index.X < xLength
 
     let toString (index: GridIndex) = $"X{index.X}, Y{index.Y}"
+
+    let getAdjacentIndexes (index: GridIndex) =
+        [ moveUp index
+          moveRight index
+          moveDown index
+          moveLeft index ]
         
 
 [<RequireQualifiedAccess>]
@@ -72,6 +78,12 @@ module Grid =
         grid
         |> List.tryItem index.Y
         |> Option.bind (List.tryItem index.X)
+
+    let tryItemV (index: GridIndex) (grid: 'a Grid) : 'a ValueOption =
+        grid
+        |> List.tryItem index.Y
+        |> Option.bind (List.tryItem index.X)
+        |> ValueOption.ofOption
 
     let map (f: 'a -> 'b) (grid: 'a Grid) : 'b Grid =
         grid

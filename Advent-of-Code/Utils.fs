@@ -90,6 +90,13 @@ module Regex =
         Some m
 
 
+module ValueOption =
+    let ofOption =
+        function
+        | None -> ValueNone
+        | Some x -> ValueSome x
+
+
 module List =
     /// Except using the index
     let excepti exceptIdx xs =
@@ -137,6 +144,11 @@ module List =
             list @ [ value ]
         else
             List.insertAt (index + 1) value list
+
+    let reduceWithZero zero reducer =
+        function
+        | [] -> zero
+        | xs -> List.reduce reducer xs
 
     // From https://stackoverflow.com/questions/1526046/f-permutations
     let rec distribute e =
