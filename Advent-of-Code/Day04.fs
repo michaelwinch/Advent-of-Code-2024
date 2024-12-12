@@ -9,44 +9,47 @@ let getWordSearch inputFile =
 
 module Part1 =
     let getPotentialWords (wordSearch: WordSearch) (index: GridIndex) currentChar : PotentialWord list =
-        let vertical =
-            [ yield Some currentChar
-              for move in [1..3] do
-                let idx = index |> GridIndex.moveDownN move
-                yield Grid.tryItem idx wordSearch ]
-            |> List.chooseAll id
+        match currentChar with
+        | 'X' | 'S' ->
+            let vertical =
+                [ yield Some currentChar
+                  for move in [1..3] do
+                    let idx = index |> GridIndex.moveDownN move
+                    yield Grid.tryItem idx wordSearch ]
+                |> List.chooseAll id
 
-        let horizontal =
-            [ yield Some currentChar
-              for move in [1..3] do
-                let idx = index |> GridIndex.moveRightN move
-                yield Grid.tryItem idx wordSearch ]
-            |> List.chooseAll id
+            let horizontal =
+                [ yield Some currentChar
+                  for move in [1..3] do
+                    let idx = index |> GridIndex.moveRightN move
+                    yield Grid.tryItem idx wordSearch ]
+                |> List.chooseAll id
 
-        let diagonalRight =
-            [ yield Some currentChar
-              for move in [1..3] do
-                let idx =
-                    index
-                    |> GridIndex.moveDownN move
-                    |> GridIndex.moveRightN move
-                yield Grid.tryItem idx wordSearch ]
-            |> List.chooseAll id
+            let diagonalRight =
+                [ yield Some currentChar
+                  for move in [1..3] do
+                    let idx =
+                        index
+                        |> GridIndex.moveDownN move
+                        |> GridIndex.moveRightN move
+                    yield Grid.tryItem idx wordSearch ]
+                |> List.chooseAll id
 
-        let diagonalLeft =
-            [ yield Some currentChar
-              for move in [1..3] do
-                let idx =
-                    index
-                    |> GridIndex.moveDownN move
-                    |> GridIndex.moveLeftN move
-                yield Grid.tryItem idx wordSearch ]
-            |> List.chooseAll id
+            let diagonalLeft =
+                [ yield Some currentChar
+                  for move in [1..3] do
+                    let idx =
+                        index
+                        |> GridIndex.moveDownN move
+                        |> GridIndex.moveLeftN move
+                    yield Grid.tryItem idx wordSearch ]
+                |> List.chooseAll id
 
-        [ vertical
-          horizontal
-          diagonalRight
-          diagonalLeft ]
+            [ vertical
+              horizontal
+              diagonalRight
+              diagonalLeft ]
+        | _ -> []
 
     let private xmas = "XMAS".ToCharArray() |> List.ofArray
     let private samx = xmas |> List.rev
@@ -96,7 +99,7 @@ module Part2 =
 
 
 // Run.example (Part1.run, day = 4, part = 1) // Part 1 example completed in 4ms with result: 18
-// Run.actual (Part1.run, day = 4, part = 1) // Part 1 actual completed in 129ms with result: 2500
+// Run.actual (Part1.run, day = 4, part = 1) // Part 1 actual completed in 37ms with result: 2500
 //
 // Run.example (Part2.run, day = 4, part = 2) // Part 2 example completed in 3ms with result: 9
 // Run.actual (Part2.run, day = 4, part = 2) // Part 2 actual completed in 7ms with result: 1933
