@@ -67,7 +67,7 @@ module Part1 =
                     let region, plots = fillRegion gardenPlots index
                     plotsInRegions.UnionWith plots
                     Some region)
-        |> Grid.choose id
+        |> Grid.chooseList id
 
     let calculateCosts =
         List.sumBy (fun x -> x.Area * x.Perimeter)
@@ -191,7 +191,7 @@ module Part2 =
                     let region, plots = fillRegion gardenPlots index
                     plotsInRegions.UnionWith plots
                     Some region)
-        |> Grid.choose id
+        |> Grid.chooseList id
 
     let calculateCosts =
         List.sumBy (fun x -> x.Area * x.Sides)

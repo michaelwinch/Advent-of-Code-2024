@@ -11,8 +11,8 @@ open Advent_of_Code.Day12.Part2
 [<Fact>]
 let ``Part 1 fill region simple 1`` () =
     let plots =
-        [ [ 'A'; 'A' ]
-          [ 'B'; 'B' ] ]
+        [| [| 'A'; 'A' |]
+           [| 'B'; 'B' |] |]
 
     let region, plotsInRegion = Part1.fillRegion plots GridIndex.zero
     plotsInRegion |> List.ofSeq |> should equal [ {X=0;Y=0}; {X=1;Y=0} ]
@@ -21,8 +21,8 @@ let ``Part 1 fill region simple 1`` () =
 [<Fact>]
 let ``Part 1 fill region simple 2`` () =
     let plots =
-        [ [ 'A'; 'A'; 'A' ]
-          [ 'A'; 'B'; 'B' ] ]
+        [| [| 'A'; 'A'; 'A' |]
+           [| 'A'; 'B'; 'B' |] |]
 
     let region, plotsInRegion = Part1.fillRegion plots GridIndex.zero
     plotsInRegion |> List.ofSeq |> should equal [ {X=0;Y=0}; {X=1;Y=0}; {X=2;Y=0}; {X=0;Y=01} ]
@@ -31,9 +31,9 @@ let ``Part 1 fill region simple 2`` () =
 [<Fact>]
 let ``Part 1 fill region plot containing plot`` () =
     let plots =
-        [ [ 'A'; 'A'; 'A' ]
-          [ 'A'; 'B'; 'A' ]
-          [ 'A'; 'A'; 'A' ] ]
+        [| [| 'A'; 'A'; 'A' |]
+           [| 'A'; 'B'; 'A' |]
+           [| 'A'; 'A'; 'A' |] |]
 
     let region, _ = Part1.fillRegion plots GridIndex.zero
     region |> should equal { Area = 8; Perimeter = 16 }
@@ -41,9 +41,9 @@ let ``Part 1 fill region plot containing plot`` () =
 [<Fact>]
 let ``Part 1 calculate regions`` () =
     let plots =
-        [ [ 'A'; 'A'; 'A' ]
-          [ 'A'; 'B'; 'A' ]
-          [ 'A'; 'A'; 'A' ] ]
+        [| [| 'A'; 'A'; 'A' |]
+           [| 'A'; 'B'; 'A' |]
+           [| 'A'; 'A'; 'A' |] |]
 
     Part1.calculateRegions plots
     |> should equal [ { Area = 8; Perimeter = 16 }; { Area = 1; Perimeter = 4 } ]
@@ -75,9 +75,9 @@ let ``Part 1 actual`` () =
 [<Fact>]
 let ``Part 2 calculate regions o`` () =
     let plots =
-        [ [ 'A'; 'A'; 'A' ]
-          [ 'A'; 'B'; 'A' ]
-          [ 'A'; 'A'; 'A' ] ]
+        [| [| 'A'; 'A'; 'A' |]
+           [| 'A'; 'B'; 'A' |]
+           [| 'A'; 'A'; 'A' |] |]
 
     Part2.calculateRegions plots
     |> should equal [ { Area = 8; Sides = 8 }; { Area = 1; Sides = 4 } ]
@@ -85,11 +85,11 @@ let ``Part 2 calculate regions o`` () =
 [<Fact>]
 let ``Part 2 calculate regions +`` () =
     let plots =
-        [ [ 'A'; 'A'; 'A'; 'A'; 'A' ]
-          [ 'A'; 'A'; 'B'; 'A'; 'A' ]
-          [ 'A'; 'B'; 'B'; 'B'; 'A' ]
-          [ 'A'; 'A'; 'B'; 'A'; 'A' ]
-          [ 'A'; 'A'; 'A'; 'A'; 'A' ] ]
+        [| [| 'A'; 'A'; 'A'; 'A'; 'A' |]
+           [| 'A'; 'A'; 'B'; 'A'; 'A' |]
+           [| 'A'; 'B'; 'B'; 'B'; 'A' |]
+           [| 'A'; 'A'; 'B'; 'A'; 'A' |]
+           [| 'A'; 'A'; 'A'; 'A'; 'A' |] |]
 
     Part2.calculateRegions plots
     |> should equal [ { Area = 20; Sides = 16 }; { Area = 5; Sides = 12 } ]

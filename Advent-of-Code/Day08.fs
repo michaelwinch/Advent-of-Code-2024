@@ -24,8 +24,7 @@ module Part1 =
                     |> Some
                     |> Option.filter (GridIndex.isWithinGrid map)
                 | _ -> None)
-            |> List.collect id
-            |> List.choose id
+            |> Grid.chooseList id
             |> Set
         | _ -> Set.empty
 
@@ -36,8 +35,8 @@ module Part1 =
 
         map
         |> Grid.mapi (findAntinodes map)
-        |> List.collect id
-        |> List.reduce (+)
+        |> Array.collect id
+        |> Array.reduce (+)
         |> Set.count
 
 
@@ -72,8 +71,7 @@ module Part2 =
                     calculateAntinodes gridLengths startCoords endCoords
                     |> Some
                 | _ -> None)
-            |> List.collect id
-            |> List.choose id
+            |> Grid.chooseList id
             |> List.reduce (+)
         | _ -> Set.empty
 
@@ -84,8 +82,8 @@ module Part2 =
 
         map
         |> Grid.mapi (findAntinodes map)
-        |> List.collect id
-        |> List.reduce (+)
+        |> Array.collect id
+        |> Array.reduce (+)
         |> Set.count
 
         

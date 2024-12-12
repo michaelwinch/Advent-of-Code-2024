@@ -26,4 +26,4 @@ let ``Part 2 example`` () =
 let ``Part 2 actual`` () =
     let result = Run.actual (Part2.run, day = 6)
     result.Result |> should equal 1723
-    result.Elapsed.TotalSeconds |> should be (lessThan 3.5)
+    result.Elapsed.TotalMilliseconds |> should be (lessThan 400)

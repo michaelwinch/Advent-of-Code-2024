@@ -97,6 +97,14 @@ module ValueOption =
         | Some x -> ValueSome x
 
 
+module Array =
+    let countIf (f: 'a -> bool) (xs: 'a array) =
+        xs |> Array.filter f |> Array.length
+
+    let countDistinct xs =
+        xs |> Array.distinct |> Array.length
+
+
 module List =
     /// Except using the index
     let excepti exceptIdx xs =

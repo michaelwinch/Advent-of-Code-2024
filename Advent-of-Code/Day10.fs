@@ -14,8 +14,7 @@ let getMap inputFile =
 
 let getTrailHeads : Map -> GridIndex list =
     Grid.mapi (fun coords height -> if height = 0 then Some coords else None)
-    >> List.collect id
-    >> List.choose id
+    >> Grid.chooseList id
     
 let findAdjacentGradualInclines (map: Map) height coords =
     [ GridIndex.moveUp coords

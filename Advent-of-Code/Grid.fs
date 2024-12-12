@@ -1,6 +1,6 @@
 namespace Advent_of_Code
 
-type Grid<'a> = 'a list list
+type Grid<'a> = 'a array array
 
 [<Struct>]
 type GridIndex =
@@ -29,8 +29,8 @@ module GridIndex =
     let isWithinGrid (grid: _ Grid) (index: GridIndex) =
         index.Y >= 0
         && index.X >= 0
-        && index.Y < List.length grid
-        && index.X < List.length grid[0]
+        && index.Y < Array.length grid
+        && index.X < Array.length grid[0]
 
     let isWithinGridLengths (xLength: int, yLength: int) (index: GridIndex) =
         index.Y >= 0
@@ -51,24 +51,24 @@ module GridIndex =
 module Grid =
     let validate (grid: _ Grid) : bool =
         match grid with
-        | [] -> true
-        | rows -> rows |> List.map List.length |> List.countDistinct = 1
+        | [||] -> true
+        | rows -> rows |> Array.map Array.length |> Array.countDistinct = 1
 
-    let lengthX (grid: _ Grid) = List.length grid[0]
-    let lengthY (grid: _ Grid) = List.length grid
+    let lengthX (grid: _ Grid) = Array.length grid[0]
+    let lengthY (grid: _ Grid) = Array.length grid
 
     let getLengths (grid: _ Grid) = lengthX grid, lengthY grid
 
     let ofStringSeq (xs: string seq) : char Grid =
         xs
-        |> Seq.map (_.ToCharArray() >> List.ofArray)
-        |> List.ofSeq
+        |> Seq.map _.ToCharArray()
+        |> Array.ofSeq
 
     /// Finds the first index where the predicate is true, searching by row then column.
     /// I.e. { X = 8; Y = 1 } will be chosen before { X = 2; Y = 2 }
     let findIndex predicate (grid: _ Grid) : GridIndex =
-        let y = List.findIndex (List.exists predicate) grid
-        let x = List.findIndex predicate grid[y]
+        let y = Array.findIndex (Array.exists predicate) grid
+        let x = Array.findIndex predicate grid[y]
         { X = x; Y = y }
 
     let item (index: GridIndex) (grid: 'a Grid) : 'a =
@@ -76,8 +76,8 @@ module Grid =
 
     let tryItem (index: GridIndex) (grid: 'a Grid) : 'a option =
         grid
-        |> List.tryItem index.Y
-        |> Option.bind (List.tryItem index.X)
+        |> Array.tryItem index.Y
+        |> Option.bind (Array.tryItem index.X)
 
     let tryItemV (index: GridIndex) (grid: 'a Grid) : 'a ValueOption =
         tryItem index grid
@@ -85,26 +85,38 @@ module Grid =
 
     let map (f: 'a -> 'b) (grid: 'a Grid) : 'b Grid =
         grid
-        |> List.map (fun row ->
+        |> Array.map (fun row ->
             row
-            |> List.map f)
+            |> Array.map f)
 
     let mapi (f: GridIndex -> 'a -> 'b) (grid: 'a Grid) : 'b Grid =
         grid
-        |> List.mapi (fun y row ->
+        |> Array.mapi (fun y row ->
             row
-            |> List.mapi (fun x value -> f { X = x; Y = y } value))
+            |> Array.mapi (fun x value -> f { X = x; Y = y } value))
 
     let updateAt (index: GridIndex) (value: 'a) (grid: 'a Grid) : 'a Grid =
-        let newRow = List.updateAt index.X value grid[index.Y]
-        List.updateAt index.Y newRow grid
+        let newRow = Array.updateAt index.X value grid[index.Y]
+        Array.updateAt index.Y newRow grid
 
-    let collect (f: 'a -> 'b list) (grid: 'a Grid) : 'b list =
+    let collectArray (f: 'a -> 'b array) (grid: 'a Grid) : 'b array =
         grid
-        |> List.collect id
+        |> Array.collect id
+        |> Array.collect f
+
+    let collectList (f: 'a -> 'b list) (grid: 'a Grid) : 'b list =
+        grid
+        |> Array.collect id
+        |> List.ofArray
         |> List.collect f
 
-    let choose (f: 'a -> 'b option) (grid: 'a Grid) : 'b list =
+    let chooseArray (f: 'a -> 'b option) (grid: 'a Grid) : 'b array =
         grid
-        |> List.collect id
-        |> List.choose f
+        |> Array.collect id
+        |> Array.choose f
+
+    let chooseList (f: 'a -> 'b option) (grid: 'a Grid) : 'b list =
+        grid
+        |> Array.collect id
+        |> Array.choose f
+        |> List.ofArray

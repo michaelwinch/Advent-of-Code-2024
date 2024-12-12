@@ -62,7 +62,7 @@ module Part1 =
 
         wordSearch
         |> Grid.mapi (getPotentialWords wordSearch)
-        |> Grid.collect id
+        |> Grid.collectList id
         |> List.countIf isXmas
 
 
@@ -94,7 +94,7 @@ module Part2 =
 
         wordSearch
         |> Grid.mapi (getX wordSearch)
-        |> Grid.choose id
+        |> Grid.chooseList id
         |> List.countIf isXmas
 
 
