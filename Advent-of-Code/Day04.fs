@@ -1,5 +1,7 @@
 module Advent_of_Code.Day04
 
+open Grid
+
 type WordSearch = char Grid
 type PotentialWord = char list
 

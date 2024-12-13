@@ -1,5 +1,7 @@
 module Advent_of_Code.Day08
 
+open Grid
+
 type AntinodeLocations = Set<GridIndex>
 
 let frequencies = ['a'..'z'] @ ['A'..'Z'] @ ['0'..'9'] |> Set

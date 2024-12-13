@@ -4,6 +4,7 @@ open System.Collections.Generic
 open Xunit
 open FsUnit.Xunit
 open Advent_of_Code
+open Advent_of_Code.Grid
 open Advent_of_Code.Day12
 open Advent_of_Code.Day12.Part1
 open Advent_of_Code.Day12.Part2

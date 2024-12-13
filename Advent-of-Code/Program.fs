@@ -30,6 +30,6 @@ type Run =
 
 [<EntryPoint>]
 let main _ =
-    Run.actual (Day09.Part2.run, day = 9, part = 2)
+    Run.actual (Day13.Part2.run, day = 13, part = 2)
     0
     

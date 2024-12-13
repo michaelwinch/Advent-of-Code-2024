@@ -1,4 +1,4 @@
-namespace Advent_of_Code
+module Advent_of_Code.Grid
 
 type Grid<'a> = 'a array array
 
@@ -15,6 +15,11 @@ module GridIndex =
         { index with
             X = index.X + moveBy.X
             Y = index.Y + moveBy.Y }
+
+    let moveBack (moveBy: GridIndex) (index: GridIndex) =
+        { index with
+            X = index.X - moveBy.X
+            Y = index.Y - moveBy.Y }
 
     let moveUp (index: GridIndex) = { index with Y = index.Y - 1 }
     let moveRight (index: GridIndex) = { index with X = index.X + 1 }

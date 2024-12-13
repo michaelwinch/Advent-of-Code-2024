@@ -1,5 +1,7 @@
 module Advent_of_Code.Day12
 
+open Grid
+
 open System.Collections.Generic
 
 type PlantType = char

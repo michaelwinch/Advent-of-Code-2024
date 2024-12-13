@@ -1,5 +1,7 @@
 module Advent_of_Code.Day10
 
+open Grid
+
 type Map = Grid<int>
 
 [<Struct>]

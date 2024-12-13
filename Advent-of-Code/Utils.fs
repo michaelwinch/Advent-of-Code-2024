@@ -26,6 +26,8 @@ module String =
 
 
 module Int32 =
+    open System
+
     let digits (x: int) =
         if x = 0 then 1
         else
@@ -35,6 +37,11 @@ module Int32 =
             |> log10
             |> int
             |> (+) 1
+
+    let ofInt64 (x: int64) =
+        if x > (Int32.MaxValue |> int64) then
+            failwithf "failed to convert int64 to int32, number too big"
+        else int x
 
 
 module Int64 =
