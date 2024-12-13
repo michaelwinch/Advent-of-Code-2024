@@ -14,7 +14,7 @@ let ``Part 1 example`` () =
 let ``Part 1 actual`` () =
     let result = Run.actual (Part1.run, day = 9, runs = 1)
     result.Result |> should equal 6353658451014L
-    result.Elapsed.TotalSeconds |> should be (lessThan 50.)
+    result.Elapsed.TotalSeconds |> should be (lessThan 1.2)
 
 [<Fact>]
 let ``Part 2 example`` () =
@@ -26,4 +26,4 @@ let ``Part 2 example`` () =
 let ``Part 2 actual`` () =
     let result = Run.actual (Part2.run, day = 9, runs = 5)
     result.Result |> should equal 6382582136592L
-    result.Elapsed.TotalSeconds |> should be (lessThan 4.)
+    result.Elapsed.TotalSeconds |> should be (lessThan 1.)

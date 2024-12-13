@@ -1,5 +1,7 @@
 module Advent_of_Code.Day09
 
+let sw = System.Diagnostics.Stopwatch()
+
 [<Struct>]
 type DenseFile =
     { Id: int
@@ -10,57 +12,49 @@ type DenseItem =
     | File of DenseFile
     | Space of size: int
 
-type DenseDiskMap = DenseItem list
-type FullDiskMap = int option list
+type DenseDiskMap = DenseItem array
+type FullDiskMap = int option array
 
 let getDenseDiskMap inputFile : DenseDiskMap =
     File.readStream inputFile
-    |> List.ofSeq
-    |> List.collect (_.ToCharArray() >> List.ofArray)
-    |> List.map (string >> int)
-    |> List.mapi (fun idx size ->
+    |> Array.ofSeq
+    |> Array.collect _.ToCharArray()
+    |> Array.map (string >> int)
+    |> Array.mapi (fun idx size ->
         if idx % 2 = 0 then
             let fileId = if idx = 0 then 0 else idx / 2
             File { Id = fileId; Size = size }
         else
             Space size)
     
-let getFullDiskMap (denseDiskMap: DenseItem list) : FullDiskMap =
+let getFullDiskMap (denseDiskMap: DenseDiskMap) : FullDiskMap =
     denseDiskMap
-    |> List.collect (function
-        | File file -> List.replicate file.Size (Some file.Id)
-        | Space size -> List.replicate size None)
+    |> Array.collect (function
+        | File file -> Array.replicate file.Size (Some file.Id)
+        | Space size -> Array.replicate size None)
 
 module Part1 =
-    type RearrangedDiskMap = int list
-
-    let getLastFileId (diskMap: FullDiskMap) : FullDiskMap * int option =
-        let rec loop =
-            function
-            | [] -> [], None
-            | Some _ as value :: rest -> List.rev rest, value
-            | None :: rest -> loop rest
-
-        loop (diskMap |> List.rev)
+    type RearrangedDiskMap = int array
 
     let rearrangeDiskMap (diskMap: FullDiskMap) : RearrangedDiskMap =
-        let rec loop rearranged =
-            function
-            | [] -> rearranged |> List.rev
-            | Some id :: rest -> loop (id :: rearranged) rest
-            | None :: rest ->
-                let rest, lastFileId = getLastFileId rest
-                match lastFileId with
-                | None -> loop rearranged []
-                | Some id -> loop (id :: rearranged) rest
+        let rec loop () =
+            let firstSpaceIdx = Array.tryFindIndex Option.isNone diskMap
+            let lastFileIdx = Array.tryFindIndexBack Option.isSome diskMap
+            match firstSpaceIdx, lastFileIdx with
+            | Some spaceIdx, Some fileIdx when spaceIdx < fileIdx ->
+                Array.swapInPlace spaceIdx fileIdx diskMap
+                loop ()
+            | _ -> ()
 
-        loop [] diskMap
+        loop ()
+        diskMap
+        |> Array.choose id
 
     let calculateChecksum (diskMap: RearrangedDiskMap) : int64 =
         diskMap
-        |> List.mapi (*)
-        |> List.map int64
-        |> List.sum
+        |> Array.mapi (*)
+        |> Array.map int64
+        |> Array.sum
 
     let run inputFile =
         inputFile
@@ -71,67 +65,57 @@ module Part1 =
 
 
 module Part2 =
-    type RearrangedDiskMap = DenseItem list
+    type RearrangedDiskMap = DenseItem array
 
-    let replaceFileWithSpace (diskMap: DenseDiskMap) (file: DenseFile) : DenseDiskMap =
-        let rec loop unchanged =
-            function
-            | [] -> unchanged |> List.rev
-            | File f :: Space nextSpace :: rest when f = file ->
-                Space (f.Size + nextSpace) :: rest
-                |> (@) (unchanged |> List.rev)
-            | File f :: rest when f = file ->
-                Space f.Size :: rest
-                |> (@) (unchanged |> List.rev)
-            | File _ as item :: rest ->
-                loop (item :: unchanged) rest
-            | Space prevSpace :: File f :: Space nextSpace :: rest when f = file ->
-                Space (prevSpace + f.Size + nextSpace) :: rest
-                |> (@) (unchanged |> List.rev)
-            | Space prevSpace :: File f :: rest when f = file ->
-                Space (prevSpace + f.Size) :: rest
-                |> (@) (unchanged |> List.rev)
-            | Space _ as item :: rest  ->
-                loop (item :: unchanged) rest
+    let swapFileAndSpace spaceIdx fileIdx (diskMap: DenseDiskMap) : DenseDiskMap =
+        let spaceSize = match diskMap[spaceIdx] with Space size -> size | _ -> failwith "expecting space"
+        let file = match diskMap[fileIdx] with File file -> file | _ -> failwith "expecting file"
 
-        loop [] diskMap
+        let diskMap =
+            match Array.tryItem (fileIdx - 1) diskMap, Array.tryItem (fileIdx + 1) diskMap with
+            | Some (Space spaceBefore), Some (Space spaceAfter) when spaceIdx < fileIdx - 1 ->
+                Array.set diskMap (fileIdx - 1) (Space (spaceBefore + file.Size + spaceAfter))
+                Array.removeManyAt fileIdx 2 diskMap
+            | Some (Space spaceBefore), _ when spaceIdx < fileIdx - 1 ->
+                Array.set diskMap (fileIdx - 1) (Space (spaceBefore + file.Size))
+                Array.removeAt fileIdx diskMap
+            | _, Some (Space spaceAfter) ->
+                Array.set diskMap fileIdx (Space (file.Size + spaceAfter))
+                Array.removeAt (fileIdx + 1) diskMap
+            | _, _ ->
+                Array.set diskMap fileIdx (Space file.Size)
+                diskMap
 
-    let putFileInFirstSpace (diskMap: DenseDiskMap) (file: DenseFile) : DenseDiskMap =
-        let rec loop rearranged =
-            function
-            | [] -> diskMap
-            | File f :: _ when f = file -> diskMap
-            | File _ as item :: rest -> loop (item :: rearranged) rest
-            | Space size as item :: rest when size < file.Size -> loop (item :: rearranged) rest
-            | Space size :: rest when size = file.Size ->
-                let rearranged = (File file :: rearranged) |> List.rev
-                let rest = replaceFileWithSpace rest file
-                rearranged @ rest
-            | Space size :: rest ->
-                let spaceLeft = size - file.Size
-                let rearranged = (Space spaceLeft :: File file :: rearranged) |> List.rev
-                let rest = replaceFileWithSpace rest file
-                rearranged @ rest
-
-        loop [] diskMap
-
-    let rearrangeDiskMap (diskMap: DenseDiskMap) : RearrangedDiskMap =
-        let rec loop rearranged =
-            function
-            | [] -> rearranged
-            | file :: rest -> loop (putFileInFirstSpace rearranged file) rest
+        let diskMap =
+            match spaceSize - file.Size with
+            | 0 ->
+                Array.set diskMap spaceIdx (File file)
+                diskMap
+            | spaceLeft ->
+                Array.set diskMap spaceIdx (File file)
+                Array.insertAfter spaceIdx (Space spaceLeft) diskMap
 
         diskMap
-        |> List.choose (function File f -> Some f | _ -> None)
-        |> List.rev
-        |> loop diskMap
+
+    let rearrangeDiskMap (diskMap: DenseDiskMap) : RearrangedDiskMap =
+        let files = diskMap |> Array.choose (function File f -> Some f | _ -> None)
+
+        Array.foldBack
+            (fun file diskMap ->
+                let firstSpaceIdx = Array.tryFindIndex (function Space s -> s >= file.Size | _ -> false) diskMap
+                let fileIdx = Array.findIndex (function File f -> f = file | _ -> false) diskMap
+                match firstSpaceIdx with
+                | Some spaceIdx when spaceIdx < fileIdx ->
+                    swapFileAndSpace spaceIdx fileIdx diskMap
+                | _ -> diskMap)
+            files
+            diskMap
 
     let calculateChecksum (diskMap: FullDiskMap) : int64 =
         diskMap
-        |> List.mapi (fun idx value -> value |> Option.map ((*) idx))
-        |> List.choose id
-        |> List.map int64
-        |> List.sum
+        |> Array.mapi (fun idx value -> value |> Option.map ((*) idx))
+        |> Array.choose id
+        |> Array.sumBy int64
 
     let run inputFile =
         inputFile
@@ -141,8 +125,5 @@ module Part2 =
         |> calculateChecksum
 
         
-// Run.example (Part1.run, day = 9, part = 1, example = 1) // Part 1 example completed in 3ms with result: 1928L
-// Run.actual (Part1.run, day = 9, part = 1) // Part 1 actual completed in 20907ms with result: 6353658451014L
-//
-// Run.example (Part2.run, day = 9, part = 2, example = 1) // Part 2 example completed in 6ms with result: 2858L
-// Run.actual (Part2.run, day = 9, part = 2) // Part 2 actual completed in 2092ms with result: 6382582136592L
+// Part 1 actual completed in 707ms with result: 6353658451014L
+// Part 2 actual completed in 349ms with result: 6382582136592L

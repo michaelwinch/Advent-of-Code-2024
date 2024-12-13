@@ -104,6 +104,18 @@ module Array =
     let countDistinct xs =
         xs |> Array.distinct |> Array.length
 
+    let swapInPlace indexA indexB (xs: _ array) =
+        let a = xs[indexA]
+        let b = xs[indexB]
+        Array.set xs indexA b
+        Array.set xs indexB a
+
+    let insertAfter index value xs =
+        if index = Array.length xs - 1 then
+            Array.append xs [| value |]
+        else
+            Array.insertAt (index + 1) value xs
+
 
 module List =
     /// Except using the index
