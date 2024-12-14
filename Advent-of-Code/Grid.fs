@@ -50,7 +50,17 @@ module GridIndex =
           moveRight index
           moveDown index
           moveLeft index ]
-        
+
+    let getAdjacentAndDiagonalIndexes (index: GridIndex) =
+        [ moveUp index
+          moveRight index
+          moveDown index
+          moveLeft index
+          move { X = -1; Y = -1 } index
+          move { X = 1; Y = -1 } index
+          move { X = -1; Y = 1 } index
+          move { X = 1; Y = 1 } index ]
+
 
 [<RequireQualifiedAccess>]
 module Grid =
@@ -125,3 +135,28 @@ module Grid =
         |> Array.collect id
         |> Array.choose f
         |> List.ofArray
+
+    let visualise (lengthX, lengthY) gridIndexes =
+        let initPosition x y =
+            gridIndexes
+            |> List.countIf (fun idx -> idx.X = x && idx.Y = y)
+            
+        let format =
+            function
+            | 0 -> "."
+            | x when x < 10 -> string x
+            | _ -> "+"
+
+        let initRow y = Array.init lengthX (fun x -> initPosition x y)
+        Array.init lengthY initRow
+        |> map format
+        |> Array.map (Array.reduce (+))
+        |> Array.iter (printfn "%s")
+
+        gridIndexes
+        |> List.filter (fun idx ->
+            idx.X < 0 || idx.X >= lengthX
+            || idx.Y < 0 || idx.Y >= lengthY)
+        |> function
+            | [] -> ()
+            | xs -> printfn "Grid Indexes outside grid %A" xs

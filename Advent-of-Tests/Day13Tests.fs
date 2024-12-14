@@ -19,7 +19,6 @@ let ``Parse claw machine`` () =
         
     getClawMachine input
     |> should equal expected
-    ()
 
 [<Fact>]
 let ``Part 1 example`` () =

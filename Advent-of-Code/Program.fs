@@ -18,7 +18,7 @@ type Run =
             let result = f filePath
             let elapsedMs = sw.ElapsedMilliseconds
             printfn "%s completed in %dms with result: %A" name elapsedMs result
-            
+
     static member example (f, day: int, part: int, ?example: int, ?runs: int) =
         Example (day, example)
         |> Run.run $"Part {part} example" f (defaultArg runs 1)
@@ -30,6 +30,6 @@ type Run =
 
 [<EntryPoint>]
 let main _ =
-    Run.actual (Day13.Part2.run, day = 13, part = 2)
+    Run.actual (Day14.Part2.run false (101, 103), day = 14, part = 2)
     0
     
