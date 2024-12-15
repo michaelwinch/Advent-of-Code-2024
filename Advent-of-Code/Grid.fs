@@ -110,6 +110,9 @@ module Grid =
             row
             |> Array.mapi (fun x value -> f { X = x; Y = y } value))
 
+    let set (grid: 'a Grid) index (value: 'a) : unit =
+        Array.set grid[index.Y] index.X value
+
     let updateAt (index: GridIndex) (value: 'a) (grid: 'a Grid) : 'a Grid =
         let newRow = Array.updateAt index.X value grid[index.Y]
         Array.updateAt index.Y newRow grid
@@ -136,11 +139,51 @@ module Grid =
         |> Array.choose f
         |> List.ofArray
 
-    let visualise (lengthX, lengthY) gridIndexes =
+    let swapInPlace indexA indexB (grid: _ Grid) =
+        let a = item indexA grid
+        set grid indexA (item indexB grid)
+        set grid indexB a
+
+    /// Swaps indexA to indexB and scooches all values in between down to the free space.
+    /// Every value between indexA and indexB moves by 1.
+    /// indexA and indexB must be on the same axis in one direction
+    let scoochInPlace indexA indexB (grid: _ Grid) : unit =
+        match indexA, indexB with
+        | _, _ when indexA = indexB -> ()
+        | { X = ax; Y = ay }, { X = bx; Y = by } when ax = bx ->
+            let a = item indexA grid
+
+            if ay < by then
+                for i in [ ay + 1 .. by ] do
+                    set grid { X = ax; Y = i - 1 } (item { X = ax; Y = i } grid)
+            else
+                for i in [ by .. ay - 1 ] |> List.rev do
+                    set grid { X = ax; Y = i + 1 } (item { X = ax; Y = i } grid)
+
+            set grid { X = ax; Y = by } a
+        | { X = ax; Y = ay }, { X = bx; Y = by } when ay = by ->
+            Array.scoochInPlace ax bx grid[ay]
+        | _ -> failwith "cannot scooch as indexes are both on different axes"
+
+    let test =
+        [ "abcdef"
+          "ghijkl"
+          "mnopqr"
+          "stuvwx" ]
+        |> ofStringSeq
+
+    scoochInPlace { X = 0; Y = 3 } { X = 0; Y = 1 } test
+
+    let visualise (format: 'a -> char) (grid: 'a Grid) =
+        grid
+        |> Array.map (fun row -> row |> Array.map format |> System.String)
+        |> Array.iter (printfn "%s")
+
+    let visualiseIndexes (lengthX, lengthY) gridIndexes =
         let initPosition x y =
             gridIndexes
             |> List.countIf (fun idx -> idx.X = x && idx.Y = y)
-            
+
         let format =
             function
             | 0 -> "."

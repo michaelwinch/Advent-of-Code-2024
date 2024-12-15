@@ -80,7 +80,7 @@ module Part2 =
     let visualise roomSize n robots =
         robots
         |> List.map _.Position
-        |> Grid.visualise roomSize
+        |> Grid.visualiseIndexes roomSize
         printfn "> %A" n
 
     let [<Literal>] sequenceMinLength = 20

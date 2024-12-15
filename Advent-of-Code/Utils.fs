@@ -113,9 +113,23 @@ module Array =
 
     let swapInPlace indexA indexB (xs: _ array) =
         let a = xs[indexA]
-        let b = xs[indexB]
-        Array.set xs indexA b
+        Array.set xs indexA xs[indexB]
         Array.set xs indexB a
+
+    /// Swaps indexA to indexB and scooches all values in between down to the free space.
+    /// Every value between indexA and indexB moves by 1
+    let scoochInPlace indexA indexB (xs: _ array) =
+        if not (indexA = indexB) then
+            let a = xs[indexA]
+
+            if indexA < indexB then
+                for i in [ indexA + 1 .. indexB ] do
+                    Array.set xs (i - 1) xs[i]
+            else
+                for i in [ indexB .. indexA - 1 ] |> List.rev do
+                    Array.set xs (i + 1) xs[i]
+
+            Array.set xs indexB a
 
     let insertAfter index value xs =
         if index = Array.length xs - 1 then
